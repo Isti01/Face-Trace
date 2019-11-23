@@ -1,0 +1,26 @@
+name: face_app
+description: A dating app made with Flutter.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.5.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: any
+  cloud_firestore: any
+  cloud_functions: any
+  firebase_auth: any
+  firebase_ml_vision: any
+  bloc: any
+  flutter_bloc: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
