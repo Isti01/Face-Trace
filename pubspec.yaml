@@ -13,10 +13,21 @@ dependencies:
   cupertino_icons: any
   cloud_firestore: any
   cloud_functions: any
+  firebase_storage: any
   firebase_auth: any
   firebase_ml_vision: any
+  google_sign_in: any
   bloc: any
   flutter_bloc: any
+  circular_reveal_animation: any
+  intl: any
+  permission_handler: any
+  image_picker: any
+  rxdart: any
+  path_provider: any
+  http: any
+  image: any
+  font_awesome_flutter: any
 
 dev_dependencies:
   flutter_test:
