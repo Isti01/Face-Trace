@@ -3,8 +3,8 @@ import 'package:face_app/login/logic.dart';
 import 'package:face_app/login/login_email/login_email_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
-import 'package:face_app/util/gradient_raised_button.dart';
 import 'package:flutter/material.dart';
+import 'package:gradient_widgets/gradient_widgets.dart';
 
 class EmailForm extends StatefulWidget {
   final bool register;
@@ -95,21 +95,22 @@ class _EmailFormState extends State<EmailForm>
                 SizedBox(height: 28),
               ],
             ),
-            GradientRaisedButton(
-              onTap: () => onSubmitted(
-                emailController.text,
-                passController.text,
-                passAgainController.text,
-              ),
-              gradientColors: appColorToColors(
-                nextColor(AppColor.values.indexOf(widget.color)),
-              ),
-              title: Padding(
+            GradientButton(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 child: Text(
                   widget.register ? "Regisztráció" : "Bejelentkezés",
                   style: TextStyle(fontSize: 20),
                 ),
+              ),
+              gradient: LinearGradient(
+                  colors: appColorToColors(
+                nextColor(AppColor.values.indexOf(widget.color)),
+              )),
+              callback: () => onSubmitted(
+                emailController.text,
+                passController.text,
+                passAgainController.text,
               ),
             ),
           ],

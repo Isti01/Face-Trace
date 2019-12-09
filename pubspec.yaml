@@ -19,6 +19,7 @@ dependencies:
   google_sign_in: any
   bloc: any
   flutter_bloc: any
+  gradient_widgets: any
   circular_reveal_animation: any
   intl: any
   permission_handler: any

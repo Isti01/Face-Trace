@@ -1,4 +1,4 @@
-import 'package:face_app/home/profile_card.dart';
+import 'package:face_app/home/match_card/match_card.dart';
 import 'package:face_app/util/firestore_queries.dart';
 import 'package:flutter/material.dart';
 
@@ -9,30 +9,58 @@ class FaceAppHome extends StatefulWidget {
 
 class _FaceAppHomeState extends State<FaceAppHome> {
   var future;
-
+  int pageIndex = 0;
+  int index = 0;
   @override
   void initState() {
     super.initState();
-
     future = getUserList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: future,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
+      body: SafeArea(
+        child: Column(
+          children: [
+            BottomNavigationBar(
+              elevation: 0,
+              currentIndex: pageIndex,
+              onTap: (i) => setState(() => pageIndex = i),
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  title: SizedBox(),
+                  activeIcon: Icon(Icons.close),
+                ),
+                BottomNavigationBarItem(
+                  activeIcon: Icon(Icons.close),
+                  icon: Icon(Icons.person),
+                  title: SizedBox(),
+                ),
+              ],
+            ),
+            Flexible(
+              child: FutureBuilder(
+                future: future,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return Center(child: CircularProgressIndicator());
 
-          final list = snapshot.data ?? [];
+                  final list = snapshot.data ?? [];
 
-          return ListView.builder(
-            itemBuilder: (c, i) => ProfileCard(uid: list[i]),
-            itemCount: list.length,
-          );
-        },
+                  return MatchCard(
+                    users: list,
+                    onSwiped: (right, uid) => setState(() {
+                      index++;
+                      print('setState');
+                    }),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
