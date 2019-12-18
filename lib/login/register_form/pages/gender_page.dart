@@ -1,4 +1,4 @@
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/login/register_form/pages/interests_page.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class _GenderPageState extends State<GenderPage> {
         children: [
           for (final gender in Gender.values)
             ChoiceWidget(
-              text: genderToString(gender),
+              text: gender.text,
               selected: this.gender == gender,
               onSelected: (_) {
                 setState(() => this.gender = gender);

@@ -1,5 +1,5 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:flutter/material.dart';
 
 class DynamicGradientBackground extends StatefulWidget {
@@ -56,7 +56,7 @@ class DynamicGradientBackgroundState extends State<DynamicGradientBackground>
         Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-          colors: appColorToColors(_prevGradient),
+          colors: _prevGradient.colors,
           begin: Alignment.bottomLeft,
           end: Alignment.topRight,
         ))),
@@ -65,12 +65,14 @@ class DynamicGradientBackgroundState extends State<DynamicGradientBackground>
             centerOffset: _startOffset,
             minRadius: 0,
             child: Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-              colors: appColorToColors(_gradient),
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-            ))),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: _gradient.colors,
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                ),
+              ),
+            ),
             animation: _revealAnimation,
           ),
         ),

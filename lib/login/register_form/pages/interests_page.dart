@@ -1,4 +1,4 @@
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +45,7 @@ class _InterestsPageState extends State<InterestsPage> {
           children: [
             for (Interest interest in widget.choices)
               ChoiceWidget(
-                text: interestToString(interest),
+                text: interest.text,
                 selected: selected.contains(interest),
                 onSelected: (val) {
                   if (val) {

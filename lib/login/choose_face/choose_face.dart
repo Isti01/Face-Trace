@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,7 @@ class _ChooseFaceState extends State<ChooseFace> {
 
   @override
   Widget build(BuildContext context) {
-    final color = appColorToColor(widget.color)[800];
+    final color = widget.color.color[800];
     final size = MediaQuery.of(context).size.shortestSide * .6;
     return FormPage(
       title: "Hol vagy a képen?",

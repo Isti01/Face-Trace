@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -126,7 +126,7 @@ class ColorCircle extends StatelessWidget {
             border: Border.all(color: Colors.white70, width: 3),
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: appColorToColors(color),
+              colors: color.colors,
               begin: Alignment.bottomLeft,
               end: Alignment.topRight,
             ),

@@ -1,64 +1,50 @@
-import 'package:flutter/material.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/user.dart';
 
-class AppState {}
+class AppState {
+  final AppColor color;
+  final List<String> uidList;
+  final bool loadingUserList;
+  final Map<String, User> users;
+
+  AppState({
+    this.color,
+    this.uidList,
+    this.loadingUserList = true,
+    this.users,
+  });
+
+  factory AppState.init() => AppState(users: {});
+
+  AppState update({
+    AppColor color,
+    List<String> userList,
+    Map<String, User> users,
+  }) =>
+      AppState(
+        color: color ?? this.color,
+        uidList: userList ?? this.uidList,
+        users: users ?? this.users,
+        loadingUserList: loadingUserList && userList == null,
+      );
+
+  @override
+  String toString() {
+    return 'AppState{color: $color, userList: $uidList}';
+  }
+}
 
 abstract class AppEvent {}
 
-enum AppColor {
-  red,
-  green,
-  blue,
-  purple,
+class UserListUpdatedEvent extends AppEvent {
+  final List<String> uidList;
+
+  UserListUpdatedEvent(this.uidList);
 }
 
-AppColor nextColor(int index) {
-  final colors = AppColor.values;
-  return colors[(index + 1) % colors.length];
-}
+class UserLoadedEvent extends AppEvent {
+  final String uid;
+  final User user;
 
-ColorSwatch appColorToColor(AppColor color) {
-  switch (color) {
-    case AppColor.red:
-      return Colors.red;
-    case AppColor.green:
-      return Colors.green;
-    case AppColor.blue:
-      return Colors.blue;
-    case AppColor.purple:
-      return Colors.purple;
-    default:
-      return Colors.blue;
-  }
-}
-
-List<Color> appColorToColors(AppColor color) {
-  switch (color) {
-    case AppColor.red:
-      return [Colors.pink[700], Colors.red[900]];
-    case AppColor.green:
-      return [Colors.teal, Colors.green[700]];
-    case AppColor.blue:
-      return [Colors.blue[500], Colors.blue[800]];
-    case AppColor.purple:
-      return [Colors.deepPurple, Colors.purple[700]];
-    default:
-      return [Colors.white, Colors.black];
-  }
-}
-
-enum Gender {
-  female,
-  male,
-  other,
-}
-
-genderToString(Gender gender) {
-  switch (gender) {
-    case Gender.female:
-      return "Nő 👩";
-    case Gender.male:
-      return "Férfi 👨";
-    case Gender.other:
-      return "Egyéb 🧑";
-  }
+  UserLoadedEvent({this.uid, this.user});
 }

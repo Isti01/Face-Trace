@@ -1,4 +1,5 @@
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/app_toast.dart';
@@ -48,7 +49,7 @@ class _SummaryPageState extends State<SummaryPage> {
       return '';
     final buffer = StringBuffer("Érdekel:");
     widget.state.interests.forEach(
-      (val) => buffer..write('  ')..write(interestToString(val)),
+      (val) => buffer..write('  ')..write(val.text),
     );
     buffer.write('\n\n');
     return buffer.toString();
@@ -61,7 +62,7 @@ class _SummaryPageState extends State<SummaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final color = appColorToColor(widget.state.color)[800];
+    final color = widget.state.color.color[800];
     final buttonTextStyle =
         Theme.of(context).textTheme.button.copyWith(color: color);
 

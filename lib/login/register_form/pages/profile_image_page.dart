@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/download_image.dart';
@@ -64,14 +64,14 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
               RaisedButton.icon(
                 icon: Icon(Icons.image),
                 label: Text("Válassz egy képet!"),
-                textColor: appColorToColor(widget.color)[800],
+                textColor: widget.color.color[800],
                 color: Colors.white,
                 onPressed: () => pickImage(ImageSource.gallery),
               ),
               RaisedButton.icon(
                 icon: Icon(Icons.camera_alt),
                 label: Text("Készíts egy képet!"),
-                textColor: appColorToColor(widget.color)[800],
+                textColor: widget.color.color[800],
                 color: Colors.white,
                 onPressed: () => pickImage(ImageSource.camera),
               ),

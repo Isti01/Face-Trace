@@ -1,17 +1,17 @@
 import 'dart:ui';
 
+import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:flutter/material.dart';
 
 class CardDescription extends StatelessWidget {
-  final data;
+  final User user;
 
-  const CardDescription({Key key, this.data}) : super(key: key);
+  const CardDescription({Key key, this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final name = data['name'];
-    final birthDate = DateTime.now().year - data['birthDate'].toDate().year;
-
+    final birthDate = DateTime.now().year - user.birthDate.year;
+    final name = user.name;
     final theme = Theme.of(context).textTheme.apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
@@ -37,15 +37,15 @@ class CardDescription extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  if (data['description'] != null) ...[
+                  if (user.description != null) ...[
                     Padding(padding: const EdgeInsets.all(4)),
                     Text(
-                      data['description'],
+                      user.description,
                       style: theme.subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ]
+                  ],
                 ],
               ),
             ),

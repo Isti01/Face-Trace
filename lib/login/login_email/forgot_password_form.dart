@@ -1,4 +1,4 @@
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/logic.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
@@ -30,7 +30,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: ThemeData(primarySwatch: appColorToColor(widget.color)),
+      data: ThemeData(primarySwatch: widget.color.color),
       child: DraggableScrollableSheet(
         initialChildSize: 0.35,
         maxChildSize: 0.5,
@@ -84,7 +84,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
               child: RaisedButton(
                 shape: AppBorder,
-                color: appColorToColor(widget.color),
+                color: widget.color.color,
                 textColor: AppTextColor,
                 child: Padding(
                   padding: const EdgeInsets.all(16),

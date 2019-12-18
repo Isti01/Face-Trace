@@ -1,4 +1,6 @@
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/gender.dart';
+import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 DateTime get legalDate {
@@ -144,44 +146,4 @@ class FaceChosenEvent extends RegisterEvent {
   final Face face;
 
   FaceChosenEvent(this.face);
-}
-
-enum Interest {
-  sports,
-  music,
-  reading,
-  writing,
-  arts,
-  dancing,
-  gardening,
-  baking,
-  movies,
-  travelling,
-}
-
-String interestToString(Interest interest) {
-  switch (interest) {
-    case Interest.sports:
-      return "⚽ Sport";
-    case Interest.music:
-      return "🎵 Zene";
-    case Interest.reading:
-      return "📚 Olvasás";
-    case Interest.writing:
-      return "📝 Írás";
-    case Interest.arts:
-      return "🎨 Művészetek";
-    case Interest.dancing:
-      return "💃 Tánc";
-    case Interest.gardening:
-      return "🌱 Kertészkedés";
-    case Interest.baking:
-      return "🍰 Konyha";
-    case Interest.movies:
-      return "🎥 Filmek";
-    case Interest.travelling:
-      return "✈️ Utazás";
-    default:
-      return "Not implemented";
-  }
 }

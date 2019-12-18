@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/bloc/register_bloc.dart';
 import 'package:face_app/bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/birthdate_page.dart';

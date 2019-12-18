@@ -3,9 +3,11 @@ import * as functions from "firebase-functions";
 import {CallableContext} from "firebase-functions/lib/providers/https";
 
 admin.initializeApp();
-const region = "europe-west1";
+const region = functions.region("europe-west1");
 const firestore = admin.firestore();
-exports.getUserList = functions.region(region).https.onCall(async (data: any, context: CallableContext) => {
+
+
+exports.getUserList = region.https.onCall(async (data: any, context: CallableContext) => {
     const uid = context?.auth?.uid;
     if (uid == null) return {message: "User is not authenticated", successful: false};
 
@@ -19,4 +21,39 @@ exports.getUserList = functions.region(region).https.onCall(async (data: any, co
     };
 });
 
+exports.onUserSwiped = region.firestore.document('swipes/{swipe}').onCreate(async (snapshot) => {
+    const data = snapshot.data();
+    if (!snapshot.exists || data === undefined) return;
+    const swipedUser = data['swipedUser'];
+    const swipedBy = data['swipedBy'];
 
+    if (!swipedUser || !swipedBy) return;
+    if (swipedBy === swipedUser) return;
+
+    const query = await firestore.collection('swipes')
+        .where('swipedBy', '==', swipedUser)
+        .where('swipedUser', '==', swipedBy)
+        .where('right', '==', true).limit(1).get();
+
+    console.log('checking if another user swiped');
+
+    if (query.empty) return;
+
+    console.log('its a match');
+
+    const chats = firestore.collection('chats');
+
+    const existingChats = await chats.where('users.' + swipedUser, '==', true)
+        .where('users.' + swipedBy, '==', true).limit(1).get();
+
+    console.log('checking chat room');
+
+    if (!existingChats.empty) return;
+
+    console.log('chat room does not exist, creating it...');
+
+    return chats.add({
+        users: {[swipedUser]: true, [swipedBy]: true},
+    });
+
+});

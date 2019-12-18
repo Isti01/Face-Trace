@@ -1,14 +1,25 @@
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/login/login.dart';
 import 'package:face_app/login/login_theme.dart';
+import 'package:face_app/util/constants.dart';
+import 'package:face_app/util/current_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FaceApp extends StatefulWidget {
   final bool loggedIn;
+  final AppColor appColor;
+  final FirebaseUser user;
 
-  const FaceApp({Key key, this.loggedIn = true}) : super(key: key);
+  const FaceApp({
+    Key key,
+    this.loggedIn = true,
+    this.appColor,
+    this.user,
+  }) : super(key: key);
 
   @override
   FaceAppState createState() => FaceAppState();
@@ -45,10 +56,24 @@ class FaceAppState extends State<FaceApp> {
 
   @override
   Widget build(BuildContext context) {
+    final homeTheme = ThemeData(primarySwatch: widget.appColor.color);
     return MaterialApp(
-      theme:
-          widget.loggedIn ? ThemeData(primarySwatch: Colors.blue) : loginTheme,
-      home: widget.loggedIn ? FaceAppHome() : Login(),
+      theme: widget.loggedIn ? homeTheme : loginTheme,
+      home: widget.loggedIn ? _home : Login(),
     );
   }
+
+  Widget get _home => StreamBuilder(
+        initialData: widget.user,
+        stream: auth.onAuthStateChanged,
+        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) =>
+            CurrentUser(
+          key: ValueKey(snapshot.data.uid),
+          user: snapshot.data,
+          child: FaceAppHome(
+            appColor: widget.appColor,
+            user: snapshot.data,
+          ),
+        ),
+      );
 }

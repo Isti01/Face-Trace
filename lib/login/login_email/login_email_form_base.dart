@@ -1,4 +1,4 @@
-import 'package:face_app/bloc/app_bloc_states.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/logic.dart';
 import 'package:face_app/login/login_email/login_email_form.dart';
 import 'package:face_app/util/app_toast.dart';
@@ -79,8 +79,7 @@ class _EmailFormState extends State<EmailForm>
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Theme(
-                      data: ThemeData(
-                          primarySwatch: appColorToColor(widget.color)),
+                      data: ThemeData(primarySwatch: widget.color.color),
                       child: LoginEmailForm(
                         formKey: _formKey,
                         register: widget.register,
@@ -103,10 +102,7 @@ class _EmailFormState extends State<EmailForm>
                   style: TextStyle(fontSize: 20),
                 ),
               ),
-              gradient: LinearGradient(
-                  colors: appColorToColors(
-                nextColor(AppColor.values.indexOf(widget.color)),
-              )),
+              gradient: LinearGradient(colors: widget.color.next.colors),
               callback: () => onSubmitted(
                 emailController.text,
                 passController.text,

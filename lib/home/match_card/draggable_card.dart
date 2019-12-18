@@ -1,19 +1,22 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/match_card/card_description.dart';
+import 'package:face_app/home/match_card/loading_card.dart';
 import 'package:face_app/util/animated_transform.dart';
-import 'package:face_app/util/firestore_queries.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image/network.dart';
 
 class DraggableCard extends StatefulWidget {
-  final uid;
+  final String uid;
+  final User user;
   final Function(bool right, String uid) onSwiped;
 
   const DraggableCard({
     Key key,
-    this.uid,
+    this.user,
     this.onSwiped,
+    this.uid,
   }) : super(key: key);
 
   @override
@@ -24,7 +27,6 @@ class DraggableCardState extends State<DraggableCard> {
   double offset = 0;
   double lastDelta = 0;
   bool swinging = false;
-  Future<DocumentSnapshot> future;
 
   get _duration => swinging
       ? Duration(milliseconds: 21)
@@ -67,52 +69,52 @@ class DraggableCardState extends State<DraggableCard> {
 
   @override
   void initState() {
-    future = firestore.collection('users').document(widget.uid).get();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: future,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
-          final data = (snapshot.data as DocumentSnapshot).data;
-          final borderRadius = BorderRadius.circular(25);
+    final loading = widget.user == null;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      child: GestureDetector(
+        onTap: () {
+          throw Exception('not implemented');
+        },
+        onHorizontalDragEnd: loading ? null : _onEnd,
+        onHorizontalDragStart: loading ? null : _onStart,
+        onHorizontalDragUpdate: loading ? null : _onUpdate,
+        child: loading ? LoadingCard() : _body(),
+      ),
+    );
+  }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            child: GestureDetector(
-              onPanEnd: _onEnd,
-              onPanStart: _onStart,
-              onPanUpdate: _onUpdate,
-              child: AnimatedTransform(
-                transform: Matrix4.translationValues(-offset, 0, 0)
-                  ..rotateZ(offset / (250 * pi)),
-                origin: Alignment.topCenter,
-                child: Material(
-                  borderRadius: borderRadius,
-                  elevation: 4,
-                  child: ClipRRect(
-                    borderRadius: borderRadius,
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Image.network(
-                            data['profileImage'],
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        CardDescription(data: data),
-                      ],
-                    ),
-                  ),
+  Widget _body() {
+    final borderRadius = BorderRadius.circular(25);
+
+    return AnimatedTransform(
+      transform: Matrix4.translationValues(-offset, 0, 0)
+        ..rotateZ(offset / (250 * pi)),
+      origin: Alignment.topCenter,
+      child: Material(
+        borderRadius: borderRadius,
+        elevation: 4,
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image(
+                  fit: BoxFit.cover,
+                  image: NetworkImageWithRetry(widget.user.profileImage),
                 ),
-                duration: _duration,
               ),
-            ),
-          );
-        });
+              CardDescription(user: widget.user),
+            ],
+          ),
+        ),
+      ),
+      duration: _duration,
+    );
   }
 }
