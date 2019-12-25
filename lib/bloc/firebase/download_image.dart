@@ -6,10 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-Future<String> downloadImage(
-  String initialPhoto,
-  Function(String photoPath) onPhotoChanged,
-) async {
+Future<String> downloadImage(String initialPhoto) async {
   if (initialPhoto == null) return null;
   try {
     final pathHash = md5.convert(utf8.encode(initialPhoto)).toString();
@@ -25,8 +22,6 @@ Future<String> downloadImage(
     await file.writeAsBytes(bytes, flush: true);
 
     final facePhotoPath = file.path;
-
-    onPhotoChanged(facePhotoPath);
 
     return facePhotoPath;
   } catch (e, s) {

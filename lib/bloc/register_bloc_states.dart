@@ -20,7 +20,7 @@ class RegisterState {
   final String description;
   final AppColor color;
   final Gender gender;
-
+  final List<Gender> attractedTo;
   final String facePhoto;
 
   RegisterState({
@@ -33,6 +33,7 @@ class RegisterState {
     this.facePhoto,
     this.detectedFaces,
     this.userFace,
+    this.attractedTo,
   });
 
   factory RegisterState.init({String name}) =>
@@ -49,6 +50,7 @@ class RegisterState {
     List<Face> detectedFaces,
     Face userFace,
     bool removeSelectedFace = false,
+    List<Gender> attractedTo,
   }) =>
       RegisterState(
         name: name ?? this.name,
@@ -60,24 +62,23 @@ class RegisterState {
         facePhoto: facePhoto ?? this.facePhoto,
         detectedFaces: detectedFaces ?? this.detectedFaces,
         userFace: removeSelectedFace ? null : userFace ?? this.userFace,
+        attractedTo: attractedTo ?? this.attractedTo,
       );
 
   bool validate() {
-    print(this);
-    print('1');
     if (name == null ||
         birthDate == null ||
         interests == null ||
         description == null ||
         color == null ||
         gender == null ||
-        facePhoto == null) return false;
-
-    print('2');
+        facePhoto == null ||
+        attractedTo == null) return false;
 
     if (name.isEmpty ||
         description.isEmpty ||
-        !birthDate.isBefore(legalDate.add(Duration(hours: 23)))) return false;
+        !birthDate.isBefore(legalDate.add(Duration(hours: 23))) ||
+        attractedTo.isEmpty) return false;
 
     return true;
   }
@@ -146,4 +147,10 @@ class FaceChosenEvent extends RegisterEvent {
   final Face face;
 
   FaceChosenEvent(this.face);
+}
+
+class AttractedToChangedEvent extends RegisterEvent {
+  final List<Gender> attractedTo;
+
+  AttractedToChangedEvent(this.attractedTo);
 }

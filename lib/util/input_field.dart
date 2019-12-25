@@ -11,6 +11,7 @@ class InputField extends StatefulWidget {
   final obscureText;
   final bool autoFocus;
   final lines;
+
   const InputField({
     Key key,
     this.node,

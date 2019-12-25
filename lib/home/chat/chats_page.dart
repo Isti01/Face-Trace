@@ -23,28 +23,27 @@ class _ChatsPageState extends State<ChatsPage> {
         if (state.loadingChats) return CircularProgressIndicator();
 
         return ListView.builder(
-            itemCount: state.chats.length,
-            itemBuilder: (c, i) {
-              final chat = state.chats[i];
-              final user = chat.user;
-              return ListTile(
-                leading: CircleAvatar(
-                  child: Image(
-                    image: NetworkImageWithRetry(user.profileImage),
-                  ),
-                ),
-                title: Text(user.name),
-                onTap: () async {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (c) => ChatRoom(
-                        bloc: widget.bloc.chatRooms[chat.chatId],
-                      ),
+          itemCount: state.chats.length,
+          itemBuilder: (c, i) {
+            final chat = state.chats[i];
+            final user = chat.user;
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImageWithRetry(user.profileImage),
+              ),
+              title: Text(user.name),
+              onTap: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (c) => ChatRoom(
+                      bloc: widget.bloc.chatRooms[chat.chatId],
                     ),
-                  );
-                },
-              );
-            });
+                  ),
+                );
+              },
+            );
+          },
+        );
       },
     );
   }

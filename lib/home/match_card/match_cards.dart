@@ -1,30 +1,33 @@
 import 'dart:math' as math;
 
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/match_card/draggable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 
-class MatchCard extends StatefulWidget {
+class MatchCards extends StatefulWidget {
   final List<String> uids;
   final Map<String, User> users;
   final Function(bool right, String uid, int index) onSwiped;
   final bool loading;
+  final AppColor appColor;
 
-  const MatchCard({
+  const MatchCards({
     Key key,
     this.onSwiped,
     this.uids = const [],
     this.users,
     this.loading = false,
+    this.appColor,
   }) : super(key: key);
 
   @override
-  _MatchCardState createState() => _MatchCardState();
+  _MatchCardsState createState() => _MatchCardsState();
 }
 
-class _MatchCardState extends State<MatchCard> {
+class _MatchCardsState extends State<MatchCards> {
   Map<String, GlobalKey<DraggableCardState>> _cardKeys = {};
   int index = 0;
 
@@ -41,7 +44,7 @@ class _MatchCardState extends State<MatchCard> {
   }
 
   @override
-  void didUpdateWidget(MatchCard oldWidget) {
+  void didUpdateWidget(MatchCards oldWidget) {
     _createKeys();
     super.didUpdateWidget(oldWidget);
   }
@@ -49,26 +52,37 @@ class _MatchCardState extends State<MatchCard> {
   @override
   Widget build(BuildContext context) {
     final bool notLast = index < (widget.uids?.length ?? 0) || widget.loading;
+    final size = MediaQuery.of(context).size;
 
     return SafeArea(
-      child: Column(
+      child: Stack(
+        fit: StackFit.passthrough,
         children: [
-          Spacer(),
+          _body(notLast, size),
           if (notLast)
-            Flexible(
-              flex: 5,
-              child: Stack(
-                children: [for (int i = start; i >= index; i--) _matchCard(i)],
-              ),
-            )
-          else
-            _ranOut,
-          Spacer(),
-          if (notLast) _buttons
+            Positioned(bottom: 24, right: 0, left: 0, child: _buttons)
         ],
       ),
     );
   }
+
+  Widget _body(bool notLast, Size size) => SingleChildScrollView(
+        child: notLast
+            ? Padding(
+                padding: EdgeInsets.symmetric(vertical: size.height / 12),
+                child: Container(
+                  height: size.shortestSide * 0.9,
+                  width: size.shortestSide * 0.9,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      for (int i = start; i >= index; i--) _matchCard(i)
+                    ],
+                  ),
+                ),
+              )
+            : _ranOut,
+      );
 
   Widget get _ranOut => Center(
         child: Text(
@@ -101,18 +115,17 @@ class _MatchCardState extends State<MatchCard> {
   }
 
   Widget get _buttons => ButtonBar(
+        mainAxisSize: MainAxisSize.max,
         alignment: MainAxisAlignment.spaceEvenly,
         children: [
           CircularGradientButton(
             child: Icon(Icons.close),
-            gradient: LinearGradient(colors: [
-              Colors.purple,
-              Colors.deepPurple,
-            ]),
+            gradient: LinearGradient(colors: widget.appColor.next.colors),
             callback: onSwipeButtonPressed(right: false),
           ),
           CircularGradientButton(
             child: Icon(Icons.favorite),
+            gradient: LinearGradient(colors: widget.appColor.colors),
             callback: onSwipeButtonPressed(right: true),
           ),
         ],

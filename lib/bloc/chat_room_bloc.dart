@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:face_app/bloc/chat_room_states.dart';
 import 'package:face_app/bloc/data_classes/chat_message.dart';
-import 'package:face_app/util/firestore_queries.dart' as db;
+import 'package:face_app/bloc/firebase/firestore_queries.dart' as db;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {

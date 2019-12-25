@@ -3,8 +3,8 @@ import 'package:face_app/login/logic.dart';
 import 'package:face_app/login/login_email/login_email_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
+import 'package:face_app/util/gradient_raised_button.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 
 class EmailForm extends StatefulWidget {
   final bool register;
@@ -43,13 +43,11 @@ class _EmailFormState extends State<EmailForm>
     if (isFormValid) {
       bool successful;
 
-      final onFailed = (error) => showToast(
-            context,
-            title: widget.register
-                ? 'A regisztráció sikertelen'
-                : 'A belépés sikertelen',
-            message: error,
-          );
+      final onFailed = (error) => showToast(context,
+          title: widget.register
+              ? 'A regisztráció sikertelen'
+              : 'A belépés sikertelen',
+          message: error);
 
       if (widget.register)
         successful = await register(email, pass, onFailed);
@@ -94,16 +92,17 @@ class _EmailFormState extends State<EmailForm>
                 SizedBox(height: 28),
               ],
             ),
-            GradientButton(
+            GradientRaisedButton(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                 child: Text(
                   widget.register ? "Regisztráció" : "Bejelentkezés",
-                  style: TextStyle(fontSize: 20),
+                  style: Theme.of(context).textTheme.title,
                 ),
               ),
               gradient: LinearGradient(colors: widget.color.next.colors),
-              callback: () => onSubmitted(
+              onTap: () => onSubmitted(
                 emailController.text,
                 passController.text,
                 passAgainController.text,

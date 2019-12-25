@@ -14,7 +14,7 @@ class AppState {
     this.users,
   });
 
-  factory AppState.init() => AppState(users: {});
+  factory AppState.init({AppColor color}) => AppState(users: {}, color: color);
 
   AppState update({
     AppColor color,

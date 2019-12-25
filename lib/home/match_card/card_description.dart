@@ -10,12 +10,6 @@ class CardDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final birthDate = DateTime.now().year - user.birthDate.year;
-    final name = user.name;
-    final theme = Theme.of(context).textTheme.apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
-        );
     return Align(
       alignment: Alignment.bottomCenter,
       child: ClipRect(
@@ -24,34 +18,55 @@ class CardDescription extends StatelessWidget {
           child: Container(
             color: Colors.black26,
             child: Padding(
-              padding:
-                  const EdgeInsets.only(bottom: 12, left: 8, top: 4, right: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    "$name, $birthDate",
-                    style: theme.title,
-                    textAlign: TextAlign.start,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (user.description != null) ...[
-                    Padding(padding: const EdgeInsets.all(4)),
-                    Text(
-                      user.description,
-                      style: theme.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
+              padding: const EdgeInsets.only(
+                bottom: 12,
+                left: 8,
+                top: 4,
+                right: 8,
               ),
+              child: _DescriptionBody(user: user),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DescriptionBody extends StatelessWidget {
+  final User user;
+
+  const _DescriptionBody({Key key, this.user}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    final birthDate = DateTime.now().year - user.birthDate.year;
+    final name = user.name;
+    final theme = Theme.of(context).textTheme.apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          "$name, $birthDate",
+          style: theme.title,
+          textAlign: TextAlign.start,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        if (user.description != null) ...[
+          Padding(padding: const EdgeInsets.all(4)),
+          Text(
+            user.description,
+            style: theme.subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ],
     );
   }
 }

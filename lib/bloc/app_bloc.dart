@@ -6,7 +6,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:face_app/bloc/app_bloc_states.dart';
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
-import 'package:face_app/util/firestore_queries.dart';
+import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
@@ -51,7 +51,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   @override
-  AppState get initialState => AppState.init();
+  AppState get initialState => AppState.init(color: color);
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {

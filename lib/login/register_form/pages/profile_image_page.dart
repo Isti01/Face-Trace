@@ -3,19 +3,16 @@ import 'dart:io';
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/constants.dart';
-import 'package:face_app/util/download_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileImagePage extends StatefulWidget {
-  final String initialPhoto;
   final Function(String photoPath) onPhotoChanged;
   final String photoFilePath;
   final AppColor color;
 
   const ProfileImagePage({
     Key key,
-    this.initialPhoto,
     this.onPhotoChanged,
     this.photoFilePath,
     this.color,
@@ -26,15 +23,13 @@ class ProfileImagePage extends StatefulWidget {
 }
 
 class _ProfileImagePageState extends State<ProfileImagePage> {
-  Future<String> pathFuture;
+  String path;
   Key imageKey = UniqueKey();
 
   @override
   void initState() {
+    path = widget.photoFilePath;
     super.initState();
-    pathFuture = widget.photoFilePath != null
-        ? Future.value(widget.photoFilePath)
-        : downloadImage(widget.initialPhoto, widget.onPhotoChanged);
   }
 
   @override
@@ -53,7 +48,8 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
             child: Center(
               child: ProfileImage(
                 key: imageKey,
-                pathFuture: pathFuture,
+                path: path,
+                pickImage: () => pickImage(ImageSource.gallery),
               ),
             ),
           ),
@@ -84,41 +80,39 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
 
   pickImage(ImageSource source) async {
     final image = await ImagePicker.pickImage(source: source);
+    if (image == null) return;
+
     setState(() {
-      pathFuture = Future.value(image.path);
+      path = image.path;
       imageKey = UniqueKey();
     });
 
-    if (image != null && await image.exists())
-      widget.onPhotoChanged(image.path);
+    if (await image.exists()) widget.onPhotoChanged(image.path);
   }
 }
 
 class ProfileImage extends StatelessWidget {
-  final pathFuture;
-
-  const ProfileImage({Key key, this.pathFuture}) : super(key: key);
+  final path;
+  final VoidCallback pickImage;
+  const ProfileImage({Key key, this.path, this.pickImage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: pathFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done)
-          return CircularProgressIndicator();
+    if (path != null)
+      return Image.file(
+        File(path),
+        fit: BoxFit.contain,
+      );
 
-        if (snapshot.hasData) {
-          return Image.file(
-            File(snapshot.data),
-            fit: BoxFit.contain,
-          );
-        }
-
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: AppBorderRadius,
-            border: Border.all(color: Colors.white, width: 2),
-          ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: AppBorderRadius,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Material(
+        child: InkWell(
+          borderRadius: AppBorderRadius,
+          onTap: pickImage,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
@@ -129,8 +123,8 @@ class ProfileImage extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

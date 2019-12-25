@@ -35,25 +35,17 @@ exports.onUserSwiped = region.firestore.document('swipes/{swipe}').onCreate(asyn
         .where('swipedUser', '==', swipedBy)
         .where('right', '==', true).limit(1).get();
 
-    console.log('checking if another user swiped');
-
     if (query.empty) return;
 
-    console.log('its a match');
-
     const chats = firestore.collection('chats');
-
     const existingChats = await chats.where('users.' + swipedUser, '==', true)
         .where('users.' + swipedBy, '==', true).limit(1).get();
 
-    console.log('checking chat room');
-
     if (!existingChats.empty) return;
-
-    console.log('chat room does not exist, creating it...');
 
     return chats.add({
         users: {[swipedUser]: true, [swipedBy]: true},
     });
 
 });
+

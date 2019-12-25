@@ -50,9 +50,9 @@ class _ChatRoomState extends State<ChatRoom> {
 
                 if (messages?.isEmpty ?? true)
                   return Text('nincs uzenet'); //todo add something better
-                final length = messages.length;
 
                 _checkIfHasEnoughMessage();
+                final length = messages.length;
 
                 return NotificationListener(
                   child: ListView.builder(

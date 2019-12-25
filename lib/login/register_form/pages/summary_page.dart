@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
@@ -44,21 +45,32 @@ class _SummaryPageState extends State<SummaryPage> {
       ? "${dateFormat.format(widget.state.birthDate)} a születési dátumom.👶\n\n"
       : "";
 
-  String get _interests {
-    if (widget.state.interests == null || widget.state.interests.isEmpty)
-      return '';
-    final buffer = StringBuffer("Érdekel:");
-    widget.state.interests.forEach(
-      (val) => buffer..write('  ')..write(val.text),
-    );
-    buffer.write('\n\n');
-    return buffer.toString();
-  }
+  String get _attractedTo =>
+      writeList(widget.state.attractedTo, "Vonzódsz utána: ");
+
+  String get _interests =>
+      writeList(widget.state.interests.toList(), "Érdekel: ");
 
   String get _description =>
       widget.state.description != null && widget.state.description.isNotEmpty
           ? 'Néhány szó magamról: ${widget.state.description}'
           : "";
+
+  String writeList(List list, String title) {
+    if (list == null || list.isEmpty) return '';
+    final buffer = StringBuffer(title);
+    list.forEach(
+      (val) {
+        var text = '';
+        if (val is Gender)
+          text = val.text;
+        else if (val is Interest) text = val.text;
+        buffer..write('  ')..write(text);
+      },
+    );
+    buffer.write('\n\n');
+    return buffer.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +85,7 @@ class _SummaryPageState extends State<SummaryPage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Text(
-          "$_name$_birthDate$_interests$_description",
+          "$_name$_attractedTo$_birthDate$_interests$_description",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.subhead,
         ),
@@ -112,6 +124,7 @@ class _SummaryPageState extends State<SummaryPage> {
   }
 
   onPressed() async {
+    print(widget.state);
     this.setState(() => loading = true);
     try {
       if (!widget.state.validate()) {

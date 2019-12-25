@@ -6,7 +6,7 @@ import 'package:face_app/bloc/app_bloc.dart';
 import 'package:face_app/bloc/chat_bloc_states.dart';
 import 'package:face_app/bloc/chat_room_bloc.dart';
 import 'package:face_app/bloc/data_classes/chat.dart';
-import 'package:face_app/util/firestore_queries.dart';
+import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -72,7 +72,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     if (newState == null)
       throw UnimplementedError('${event.runtimeType} was not mapped to state');
-    print(newState);
 
     yield newState;
   }

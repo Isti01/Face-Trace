@@ -1,79 +1,85 @@
-import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/user.dart';
+import 'package:face_app/bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/login/login.dart';
-import 'package:face_app/login/login_theme.dart';
-import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FaceApp extends StatefulWidget {
-  final bool loggedIn;
-  final AppColor appColor;
-  final FirebaseUser user;
-
-  const FaceApp({
-    Key key,
-    this.loggedIn = true,
-    this.appColor,
-    this.user,
-  }) : super(key: key);
-
   @override
-  FaceAppState createState() => FaceAppState();
+  _FaceAppState createState() => _FaceAppState();
 }
 
-class FaceAppState extends State<FaceApp> {
+class _FaceAppState extends State<FaceApp> {
+  UserBloc userBloc;
+
   @override
   void initState() {
-    super.initState();
+    userBloc = UserBloc();
     _requestPermissions();
+    super.initState();
   }
-
-  _requestPermissions() async {
-    final handler = PermissionHandler();
-    // I used Observable because plain List doesnt have asyncMap
-    final permissions = await Observable.fromIterable([
-      PermissionGroup.storage,
-      PermissionGroup.camera,
-      PermissionGroup.location,
-    ]).asyncMap(_isGranted).where((result) => result != null).toList();
-
-    if (permissions.isEmpty) return;
-    handler.requestPermissions(permissions);
-  }
-
-  Future<PermissionGroup> _isGranted(PermissionGroup permission) async {
-    final result = await PermissionHandler().checkPermissionStatus(permission);
-    final granted = result == PermissionStatus.granted;
-
-    return granted ? null : permission;
-  }
-
-  update() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    final homeTheme = ThemeData(primarySwatch: widget.appColor.color);
     return MaterialApp(
-      theme: widget.loggedIn ? homeTheme : loginTheme,
-      home: widget.loggedIn ? _home : Login(),
+      home: BlocBuilder<UserBloc, User>(
+        bloc: userBloc,
+        builder: (BuildContext context, User state) {
+          final user = state.user;
+          if (state.initial)
+            return Scaffold(
+                body: Center(
+              child: Text('some creative splash screen'),
+            ));
+
+          if (user == null) return Login();
+
+          if (!state.fetchedData)
+            return Scaffold(
+                body: Center(
+              child: Text(
+                  'some creative splash screen'), //todo make a better splashscreen
+            ));
+
+          if (!state.hasData) return Login(startPage: 1, initialUser: user);
+
+          return CurrentUser(
+            key: ValueKey(user.uid),
+            user: user,
+            child: FaceAppHome(user: user, appColor: state.appColor),
+          );
+        },
+      ),
     );
   }
 
-  Widget get _home => StreamBuilder(
-        initialData: widget.user,
-        stream: auth.onAuthStateChanged,
-        builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) =>
-            CurrentUser(
-          key: ValueKey(snapshot.data.uid),
-          user: snapshot.data,
-          child: FaceAppHome(
-            appColor: widget.appColor,
-            user: snapshot.data,
-          ),
-        ),
-      );
+  @override
+  void dispose() {
+    userBloc.close();
+    super.dispose();
+  }
+}
+
+_requestPermissions() async {
+  final handler = PermissionHandler();
+  // I used Observable because plain List doesnt have asyncMap
+  final permissions = await Observable.fromIterable([
+    PermissionGroup.storage,
+    PermissionGroup.camera,
+    PermissionGroup.location,
+  ]).asyncMap(_isGranted).where((result) => result != null).toList();
+
+  if (permissions.isEmpty) return;
+  handler.requestPermissions(permissions);
+}
+
+Future<PermissionGroup> _isGranted(PermissionGroup permission) async {
+  final result = await PermissionHandler().checkPermissionStatus(permission);
+  final granted = result == PermissionStatus.granted;
+
+  return granted ? null : permission;
 }

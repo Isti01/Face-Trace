@@ -46,6 +46,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       newState = state.update(userFace: event.face);
     } else if (event is FacesDetectedEvent) {
       newState = state.update(detectedFaces: event.faces);
+    } else if (event is AttractedToChangedEvent) {
+      newState = state.update(attractedTo: event.attractedTo);
     }
 
     if (newState == null) {
@@ -73,6 +75,13 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   onFacesDetected(List<Face> faces) => add(FacesDetectedEvent(faces));
 
   onFaceChosen(Face face) => add(FaceChosenEvent(face));
+
+  onAttractedToChanged(List<Gender> genders) =>
+      add(AttractedToChangedEvent(genders));
+
+  updatePhoto(String photoUrl) {
+    if (photoUrl != null) onPhotoChanged(photoUrl);
+  }
 
   @override
   void onError(Object error, StackTrace stacktrace) {

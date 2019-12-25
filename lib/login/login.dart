@@ -1,12 +1,12 @@
+import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:face_app/bloc/register_bloc.dart';
 import 'package:face_app/bloc/register_bloc_states.dart';
-import 'package:face_app/face_app.dart';
 import 'package:face_app/login/choose_face/choose_face.dart';
 import 'package:face_app/login/login_email/login_email.dart';
+import 'package:face_app/login/login_theme.dart';
 import 'package:face_app/login/register_form/register_form.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
-import 'package:face_app/util/firestore_queries.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +14,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Login extends StatefulWidget {
   final int startPage;
-
-  const Login({Key key, this.startPage = 0}) : super(key: key);
+  final FirebaseUser initialUser;
+  const Login({
+    Key key,
+    this.startPage = 0,
+    this.initialUser,
+  }) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
@@ -32,17 +36,45 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    user = widget.initialUser;
     controller = PageController(initialPage: widget.startPage);
   }
 
-  onLoginComplete(FirebaseUser user) => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (c) => FaceApp(loggedIn: true)),
-      );
+  List<Widget> pages(BuildContext context, RegisterState state) => [
+        LoginEmail(
+          onLoginCompleted: () => onLoginCompleted(context, state),
+          color: state.color,
+        ),
+        RegisterForm(
+          user: user,
+          backgroundKey: _backgroundKey,
+          bloc: bloc,
+          onRegistrationFinished: (List<Face> faces) async {
+            print(faces.length);
+            if (faces.length == 1) {
+              // did it this way, because state mapping is async and I cannot await it
+
+              await saveUserData(user, state.update(userFace: faces.first));
+              return;
+            }
+            nextPage();
+          },
+        ),
+        ChooseFace(
+          faces: state.detectedFaces,
+          initialFace: state.userFace,
+          onFaceChosen: bloc.onFaceChosen,
+          faceImagePath: state.facePhoto,
+          color: state.color,
+          onFinished: () => saveUserData(user, state),
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RegisterBloc, RegisterState>(
+    return Theme(
+      data: loginTheme,
+      child: BlocBuilder<RegisterBloc, RegisterState>(
         bloc: bloc,
         builder: (context, state) {
           return Scaffold(
@@ -53,63 +85,21 @@ class _LoginState extends State<Login> {
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 controller: controller,
-                children: [
-                  LoginEmail(
-                    onLoginCompleted: onLoginCompleted,
-                    color: state.color,
-                  ),
-                  RegisterForm(
-                    user: user,
-                    backgroundKey: _backgroundKey,
-                    bloc: bloc,
-                    onRegistrationFinished: (List<Face> faces) async {
-                      print(faces.length);
-                      if (faces.length == 1) {
-                        // did it this way, because state mapping is async and I cannot await it
-                        await onRegistrationFinished(
-                          user,
-                          state.update(userFace: faces.first),
-                        );
-                        return;
-                      }
-                      nextPage();
-                    },
-                  ),
-                  ChooseFace(
-                    faces: state.detectedFaces,
-                    initialFace: state.userFace,
-                    onFaceChosen: bloc.onFaceChosen,
-                    faceImagePath: state.facePhoto,
-                    color: state.color,
-                    onFinished: () async => onRegistrationFinished(user, state),
-                  ),
-                ],
+                children: pages(context, state),
               ),
             ),
           );
-        });
-  }
-
-  Future<void> onRegistrationFinished(
-    FirebaseUser user,
-    RegisterState state,
-  ) async {
-    await saveUserData(user, state);
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (c) => FaceApp()),
+        },
+      ),
     );
   }
 
-  onLoginCompleted() async {
+  onLoginCompleted(BuildContext context, RegisterState state) async {
     try {
       user = await auth.currentUser();
       final document = await getUserData(user);
 
-      if (document?.data != null && document.data.isNotEmpty) {
-        onLoginComplete(user);
-        return;
-      }
+      if (document?.data != null && document.data.isNotEmpty) return;
     } catch (e, s) {
       print([e, s]);
     }
@@ -127,7 +117,6 @@ class _LoginState extends State<Login> {
         duration: Duration(milliseconds: 1000),
         curve: Curves.easeOutCubic,
       );
-      // just in case
     });
   }
 
