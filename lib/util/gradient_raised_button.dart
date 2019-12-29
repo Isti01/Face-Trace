@@ -5,6 +5,7 @@ class GradientRaisedButton extends StatefulWidget {
   final Gradient gradient;
   final VoidCallback onTap;
   final BorderRadius borderRadius;
+  final BoxShape shape;
 
   const GradientRaisedButton({
     Key key,
@@ -12,7 +13,22 @@ class GradientRaisedButton extends StatefulWidget {
     this.onTap,
     this.child,
     this.borderRadius,
+    this.shape = BoxShape.rectangle,
   }) : super(key: key);
+
+  factory GradientRaisedButton.circle({
+    Widget child,
+    Gradient gradient,
+    VoidCallback onTap,
+    BorderRadius borderRadius,
+  }) =>
+      GradientRaisedButton(
+        gradient: gradient,
+        onTap: onTap,
+        child: child,
+        borderRadius: borderRadius,
+        shape: BoxShape.circle,
+      );
 
   @override
   _GradientRaisedButtonState createState() => _GradientRaisedButtonState();
@@ -23,29 +39,41 @@ class _GradientRaisedButtonState extends State<GradientRaisedButton> {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = widget.borderRadius ?? BorderRadius.circular(12);
-    return Material(
-      borderRadius: borderRadius,
-      elevation: tapping ? 8 : 4,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: widget.gradient,
-          borderRadius: borderRadius,
-        ),
-        child: Material(
-          borderRadius: borderRadius,
-          type: MaterialType.transparency,
-          child: InkWell(
+    final circle = widget.shape == BoxShape.circle;
+
+    final constraints = circle
+        ? BoxConstraints(minWidth: 64, minHeight: 64)
+        : BoxConstraints(minWidth: 88, minHeight: 36);
+    final type = circle ? MaterialType.circle : MaterialType.button;
+    final borderRadius =
+        circle ? null : (widget.borderRadius ?? BorderRadius.circular(12));
+    return ConstrainedBox(
+      constraints: constraints,
+      child: Material(
+        borderRadius: borderRadius,
+        color: Colors.white,
+        type: type,
+        elevation: tapping ? 8 : 4,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: widget.gradient,
             borderRadius: borderRadius,
-            onTapCancel: () => setState(() => tapping = false),
-            onTapDown: (d) => setState(() => tapping = true),
-            onTap: () {
-              setState(() => tapping = false);
-              widget.onTap();
-            },
-            child: ConstrainedBox(
-              child: widget.child ?? Container(),
-              constraints: BoxConstraints(minWidth: 88, minHeight: 36),
+            shape: widget.shape,
+          ),
+          child: Material(
+            borderRadius: borderRadius,
+            type: type,
+            elevation: 0,
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: borderRadius ?? BorderRadius.circular(999),
+              onTapCancel: () => setState(() => tapping = false),
+              onTapDown: (d) => setState(() => tapping = true),
+              onTap: () {
+                setState(() => tapping = false);
+                widget.onTap();
+              },
+              child: Center(child: widget.child ?? Container()),
             ),
           ),
         ),

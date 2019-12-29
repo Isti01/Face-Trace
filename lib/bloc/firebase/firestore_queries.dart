@@ -35,36 +35,36 @@ Future<String> uploadPhoto(FirebaseUser user, RegisterState state) async {
 }
 
 Future<void> saveUserData(FirebaseUser user, RegisterState state) async {
-  print('run face model');
-  final faceData =
-      await runFaceModel(state.facePhoto, state.userFace.boundingBox);
+  final faceData = await runFaceModel(
+    state.facePhoto,
+    state.userFace.boundingBox,
+  ).catchError((e, s) {
+    print([e, s]);
+    return [];
+  });
 
-  print('updating photo');
   final photoUrl = await uploadPhoto(user, state);
 
   final updateInfo = UserUpdateInfo()
     ..photoUrl = photoUrl
     ..displayName = state.name;
 
-  print('concurrently uploading');
-
   await Future.wait([
     user.updateProfile(updateInfo),
     getUserDocument(user.uid).setData({
-      if (state.name != null && state.name.isNotEmpty) "name": state.name,
+      "name": state.name,
       "gender": clearEnum(state.gender.toString()),
       "appColor": clearEnum(state.color.toString()),
       "interests":
           state.interests.map((s) => s.toString()).map(clearEnum).toList(),
-      if (state.description != null && state.description.isNotEmpty)
-        "description": state.description,
+      "description": state.description,
       "birthDate": state.birthDate,
       "createdAt": FieldValue.serverTimestamp(),
       "profileImage": photoUrl,
     }),
-    faces.document(user.uid).setData({"faceData": faceData}),
+    if (faceData?.isNotEmpty ?? false)
+      faces.document(user.uid).setData({"faceData": faceData}),
   ]);
-  print('finished :)');
 }
 
 Future<List<String>> getUserList() async {

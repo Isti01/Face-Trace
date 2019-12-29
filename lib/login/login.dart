@@ -80,7 +80,7 @@ class _LoginState extends State<Login> {
           return Scaffold(
             body: DynamicGradientBackground(
               key: _backgroundKey,
-              initialColor: state.color,
+              color: state.color,
               child: PageView(
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,

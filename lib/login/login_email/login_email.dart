@@ -4,7 +4,6 @@ import 'package:face_app/login/login_email/forgot_password_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'login_email_form_base.dart';
 import 'login_tabbar.dart';
@@ -108,10 +107,7 @@ class _LoginEmailState extends State<LoginEmail>
                 else
                   showToast(context, title: "A bejelentkezés sikertelen");
               },
-              icon: Icon(
-                FontAwesomeIcons.google,
-                color: Colors.red,
-              ),
+              icon: Image.asset('assets/google.png', height: 24, width: 24),
               label: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text('Belépés Google-el'),

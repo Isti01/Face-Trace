@@ -31,6 +31,34 @@ class User {
     this.initial = false,
   });
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          appColor == other.appColor &&
+          birthDate == other.birthDate &&
+          createdAt == other.createdAt &&
+          description == other.description &&
+          gender == other.gender &&
+          interests == other.interests &&
+          name == other.name &&
+          profileImage == other.profileImage &&
+          user == other.user &&
+          other.initial == initial;
+
+  @override
+  int get hashCode =>
+      appColor.hashCode ^
+      birthDate.hashCode ^
+      createdAt.hashCode ^
+      description.hashCode ^
+      gender.hashCode ^
+      interests.hashCode ^
+      name.hashCode ^
+      profileImage.hashCode ^
+      user.hashCode;
+
   factory User.fromMap(Map<String, dynamic> map, [FirebaseUser user]) {
     if (map == null) return User(user: user, fetchedData: true);
 

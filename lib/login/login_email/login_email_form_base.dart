@@ -92,20 +92,23 @@ class _EmailFormState extends State<EmailForm>
                 SizedBox(height: 28),
               ],
             ),
-            GradientRaisedButton(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-                child: Text(
-                  widget.register ? "Regisztráció" : "Bejelentkezés",
-                  style: Theme.of(context).textTheme.title,
+            Positioned(
+              bottom: 0,
+              child: GradientRaisedButton(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                  child: Text(
+                    widget.register ? "Regisztráció" : "Bejelentkezés",
+                    style: Theme.of(context).textTheme.title,
+                  ),
                 ),
-              ),
-              gradient: LinearGradient(colors: widget.color.next.colors),
-              onTap: () => onSubmitted(
-                emailController.text,
-                passController.text,
-                passAgainController.text,
+                gradient: LinearGradient(colors: widget.color.next.colors),
+                onTap: () => onSubmitted(
+                  emailController.text,
+                  passController.text,
+                  passAgainController.text,
+                ),
               ),
             ),
           ],

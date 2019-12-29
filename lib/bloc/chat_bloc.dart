@@ -2,22 +2,21 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:face_app/bloc/app_bloc.dart';
 import 'package:face_app/bloc/chat_bloc_states.dart';
 import 'package:face_app/bloc/chat_room_bloc.dart';
 import 'package:face_app/bloc/data_classes/chat.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
+import 'package:face_app/bloc/match_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirebaseUser user;
   StreamSubscription chatStream;
-  final AppBloc appBloc;
+  final MatchBloc matchBloc;
   final Map<String, ChatRoomBloc> chatRooms = {};
 
-  ChatBloc({this.user, @required this.appBloc}) {
+  ChatBloc({this.user, @required this.matchBloc}) {
     chatStream = getChats(user).listen(
       _onChatsLoaded,
       onError: (e, s) => print([e, s]),
@@ -26,7 +25,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   _onChatsLoaded(QuerySnapshot snapshot) async {
     final chatRooms =
-        await Observable.fromIterable(snapshot.documents).asyncMap((doc) async {
+        await Stream.fromIterable(snapshot.documents).asyncMap((doc) async {
       final map = Map<String, dynamic>.from(doc.data);
       final uids = Chat.uidsFromMap(map);
       final partner = uids.firstWhere((uid) => uid != user.uid);
@@ -34,7 +33,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return Chat.fromMap(
         map,
         chatId: doc.documentID,
-        user: await appBloc.getUser(partner),
+        user: await matchBloc.getUser(partner),
       );
     }).toList();
     _updateBlocs(snapshot.documentChanges);

@@ -1,11 +1,10 @@
 import 'dart:ui';
 
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 
 class LoadingCard extends StatefulWidget {
-  final appColor = AppColor.green;
-
   @override
   _LoadingCardState createState() => _LoadingCardState();
 }
@@ -13,14 +12,19 @@ class LoadingCard extends StatefulWidget {
 class _LoadingCardState extends State<LoadingCard>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  Animation<Color> colorAnimation;
-  Animation<double> gradAnimation;
+  Animation<double> animation;
 
-  get _initAnimation =>
-      CurvedAnimation(parent: _controller, curve: Curves.ease).drive(ColorTween(
-        begin: widget.appColor.color[300],
-        end: widget.appColor.color[600],
-      ));
+  get _initAnimation => CurvedAnimation(parent: _controller, curve: Curves.ease)
+      .drive(Tween<double>(begin: 0, end: 1));
+
+  Color get colorAnimation {
+    AppColor appColor =
+        mounted ? CurrentUser.of(context).user.appColor : AppColor.green;
+
+    ColorSwatch color = appColor.color;
+
+    return Color.lerp(color[400], color[800], animation.value);
+  }
 
   @override
   void initState() {
@@ -31,7 +35,7 @@ class _LoadingCardState extends State<LoadingCard>
       duration: Duration(milliseconds: 1500),
     );
 
-    colorAnimation = _initAnimation;
+    animation = _initAnimation;
     _controller.addListener(() {
       if (mounted) setState(() {});
     });
@@ -39,15 +43,8 @@ class _LoadingCardState extends State<LoadingCard>
   }
 
   @override
-  void didUpdateWidget(LoadingCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    colorAnimation = _initAnimation;
-  }
-
-  @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(25);
-    colorAnimation = _initAnimation;
 
     return Material(
       borderRadius: borderRadius,
@@ -58,7 +55,7 @@ class _LoadingCardState extends State<LoadingCard>
           children: [
             Positioned.fill(
                 child: Material(
-              child: Icon(Icons.person, size: 120, color: colorAnimation.value),
+              child: Icon(Icons.person, size: 120, color: colorAnimation),
             )),
             Align(
               alignment: Alignment.bottomCenter,
@@ -99,7 +96,7 @@ class _LoadingCardState extends State<LoadingCard>
       width: smaller ? 180 : 240,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: colorAnimation.value,
+        color: colorAnimation,
       ));
 
   @override

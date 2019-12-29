@@ -7,7 +7,7 @@ class NavBarItemWidget extends StatelessWidget {
   final AppColor appColor;
   final int selectedIndex;
   final String title;
-  final IconData icon;
+  final String icon;
   final int index;
   final Function(int i) onItemSelected;
 
@@ -25,41 +25,46 @@ class NavBarItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final selected = selectedIndex == index;
 
-    final theme = Theme.of(context);
-    final themeData = theme.copyWith(
-      iconTheme: theme.iconTheme.copyWith(
-        color: selected ? Colors.white : Colors.grey[500],
-      ),
-    );
-
     return GestureDetector(
       onTap: () => onItemSelected(index),
-      child: AnimatedContainer(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          color: selected ? appColor.color : Color(0x00ffffff),
-        ),
+      child: Material(
+        type: MaterialType.transparency,
         child: Padding(
-          padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedTheme(
-                child: Icon(icon),
-                data: themeData,
-                duration: duration,
+          // this way it is easier to tap the navbar items
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          child: AnimatedContainer(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              color: selected ? appColor.color[700] : Color(0x00ffffff),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4, top: 4, bottom: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [_iconWidget, animatedText],
               ),
-              animatedText
-            ],
+            ),
+            duration: duration,
           ),
         ),
-        duration: duration,
       ),
     );
   }
 
-  get animatedText => Padding(
+  Widget get _iconWidget => Container(
+        child: Text(
+          icon,
+          style: TextStyle(inherit: true, fontSize: 20),
+        ),
         padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white30,
+        ),
+      );
+
+  Widget get animatedText => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: AnimatedSwitcher(
           transitionBuilder: (widget, animation) => SizeTransition(
             sizeFactor: animation,
@@ -70,11 +75,15 @@ class NavBarItemWidget extends StatelessWidget {
           child: selectedIndex == index
               ? Container(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
+                    padding: const EdgeInsets.only(right: 8),
                     child: Text(
                       title,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: .6,
+                      ),
                     ),
                   ),
                 )

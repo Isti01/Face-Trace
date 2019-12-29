@@ -8,11 +8,22 @@ extension GenderExtension on Gender {
   String get text {
     switch (this) {
       case Gender.female:
-        return "Nő 👩";
+        return "Nő $emoji";
       case Gender.male:
-        return "Férfi 👨";
+        return "Férfi $emoji";
       default:
-        return "Egyéb 🧑";
+        return "Egyéb $emoji";
+    }
+  }
+
+  String get emoji {
+    switch (this) {
+      case Gender.female:
+        return "👩";
+      case Gender.male:
+        return "👨";
+      default:
+        return "🧑";
     }
   }
 

@@ -3,16 +3,12 @@ import 'dart:math' as math;
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:face_app/bloc/app_bloc_states.dart';
-import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:face_app/bloc/match_bloc_states.dart';
 
-class AppBloc extends Bloc<AppEvent, AppState> {
-  final AppColor color;
-
-  AppBloc({this.color = AppColor.green}) {
+class MatchBloc extends Bloc<MatchEvent, MatchState> {
+  MatchBloc() {
     getUsers();
   }
 
@@ -20,7 +16,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     bool finished = false;
     int i = 0;
     while (i++ < 3 && !finished) {
-      await Observable(Connectivity().onConnectivityChanged)
+      await Connectivity()
+          .onConnectivityChanged
           .where((event) => event != ConnectivityResult.none)
           .first
           .then((_) async {
@@ -51,11 +48,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   @override
-  AppState get initialState => AppState.init(color: color);
+  MatchState get initialState => MatchState.init();
 
   @override
-  Stream<AppState> mapEventToState(AppEvent event) async* {
-    AppState newState;
+  Stream<MatchState> mapEventToState(MatchEvent event) async* {
+    MatchState newState;
 
     if (event is UserListUpdatedEvent) {
       newState = state.update(userList: event.uidList);
@@ -63,6 +60,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final map = state.users;
       map[event.uid] = event.user;
       newState = state.update(users: map);
+    } else if (event is NewIndexEvent) {
+      newState = state.update(lastIndex: event.newIndex);
     }
 
     if (newState == null)
@@ -74,5 +73,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void onError(Object error, StackTrace stacktrace) {
     super.onError(error, stacktrace);
     print([error, stacktrace]);
+  }
+
+  onSwiped(bool right, String uid, int index) {
+    final uids = state.uidList;
+
+    if (index >= uids.length) return;
+    uids.getRange(index, math.min(index + 3, uids.length)).forEach(loadUser);
+
+    add(NewIndexEvent(index + 1));
+
+    swipeUser(uid: uid, right: right);
   }
 }

@@ -3,12 +3,12 @@ import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:flutter/material.dart';
 
 class DynamicGradientBackground extends StatefulWidget {
-  final AppColor initialColor;
+  final AppColor color;
   final Widget child;
 
   const DynamicGradientBackground({
     Key key,
-    this.initialColor,
+    this.color,
     this.child,
   }) : super(key: key);
 
@@ -27,7 +27,7 @@ class DynamicGradientBackgroundState extends State<DynamicGradientBackground>
 
   @override
   void initState() {
-    _prevGradient = _gradient = widget.initialColor;
+    _prevGradient = _gradient = widget.color;
     super.initState();
     _controller = AnimationController(
       vsync: this,
@@ -46,6 +46,25 @@ class DynamicGradientBackgroundState extends State<DynamicGradientBackground>
     this._startOffset = startOffset;
     _controller.reset();
     _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(DynamicGradientBackground oldWidget) {
+    if (oldWidget.color != widget.color) {
+      if (mounted) {
+        final size = MediaQuery.of(context).size;
+        changeGradient(
+          gradient: widget.color,
+          startOffset: Offset(size.width / 2, size.height / 2),
+        );
+      } else {
+        changeGradient(
+          gradient: widget.color,
+          startOffset: Offset(0, 0),
+        );
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

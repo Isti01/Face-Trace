@@ -1,7 +1,6 @@
 import 'package:face_app/login/logic.dart';
 import 'package:face_app/util/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginEmailForm extends StatefulWidget {
   final GlobalKey<FormState> formKey;
@@ -101,9 +100,7 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
               ),
               IconButton(
                 onPressed: () => setState(() => obscure = !obscure),
-                icon: Icon(
-                  obscure ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash,
-                ),
+                icon: Icon(obscure ? Icons.visibility : Icons.visibility_off),
               ),
             ],
           ),

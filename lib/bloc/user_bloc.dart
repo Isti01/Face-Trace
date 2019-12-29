@@ -36,10 +36,10 @@ class UserBloc extends Bloc<UserEvent, User> {
 
   @override
   Stream<User> mapEventToState(UserEvent event) async* {
-    if (event is NewUserEvent && state.user != event.newUser)
+    if (event is NewUserEvent &&
+        (state.user != event.newUser || event.newUser == null)) {
       yield User(user: event.newUser);
-
-    if (event is UserDataUpdated)
+    } else if (event is UserDataUpdated)
       yield User.fromMap(event.userData.data, state.user);
   }
 
@@ -54,5 +54,12 @@ class UserBloc extends Bloc<UserEvent, User> {
     await authSubscription?.cancel();
     await dataSubscription?.cancel();
     return super.close();
+  }
+
+  bool fieldChanged(String text, String field) {
+    final uid = state.user.uid;
+    if (uid == null || text == null) return false;
+    getUserDocument(uid).updateData({field: text});
+    return true;
   }
 }

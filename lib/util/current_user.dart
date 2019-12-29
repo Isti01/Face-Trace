@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:flutter/material.dart';
 
 class CurrentUser extends InheritedWidget {
-  final FirebaseUser user;
+  final User user;
   const CurrentUser({
     Key key,
     @required Widget child,

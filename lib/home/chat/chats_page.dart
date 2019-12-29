@@ -6,19 +6,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image/network.dart';
 
 class ChatsPage extends StatefulWidget {
-  final ChatBloc bloc;
-
-  const ChatsPage({Key key, this.bloc}) : super(key: key);
+  const ChatsPage({Key key}) : super(key: key);
 
   @override
   _ChatsPageState createState() => _ChatsPageState();
 }
 
 class _ChatsPageState extends State<ChatsPage> {
+  ChatBloc get bloc => BlocProvider.of<ChatBloc>(context);
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
-      bloc: widget.bloc,
       builder: (context, state) {
         if (state.loadingChats) return CircularProgressIndicator();
 
@@ -36,7 +35,7 @@ class _ChatsPageState extends State<ChatsPage> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (c) => ChatRoom(
-                      bloc: widget.bloc.chatRooms[chat.chatId],
+                      bloc: bloc.chatRooms[chat.chatId],
                     ),
                   ),
                 );

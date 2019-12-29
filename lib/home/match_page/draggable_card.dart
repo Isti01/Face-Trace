@@ -1,8 +1,9 @@
 import 'dart:math';
 
 import 'package:face_app/bloc/data_classes/user.dart';
-import 'package:face_app/home/match_card/card_description.dart';
-import 'package:face_app/home/match_card/loading_card.dart';
+import 'package:face_app/home/match_page/card_description.dart';
+import 'package:face_app/home/match_page/loading_card.dart';
+import 'package:face_app/home/match_page/user_page/user_page.dart';
 import 'package:face_app/util/animated_transform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image/network.dart';
@@ -68,19 +69,14 @@ class DraggableCardState extends State<DraggableCard> {
       });
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final loading = widget.user == null;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: GestureDetector(
-        onTap: () {
-          throw Exception('not implemented');
-        },
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (c) => UserPage()),
+        ),
         onHorizontalDragEnd: loading ? null : _onEnd,
         onHorizontalDragStart: loading ? null : _onStart,
         onHorizontalDragUpdate: loading ? null : _onUpdate,
