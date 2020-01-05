@@ -27,7 +27,7 @@ extension GenderExtension on Gender {
     }
   }
 
-  static parse(String source) {
+  static Gender parse(String source) {
     switch (source.toLowerCase()) {
       case "female":
         return Gender.female;
@@ -35,6 +35,17 @@ extension GenderExtension on Gender {
         return Gender.male;
       default:
         return Gender.other;
+    }
+  }
+
+  static List<Gender> parseList(map) {
+    if (map == null) return [];
+
+    try {
+      return List<String>.from(map).map(parse).toList();
+    } catch (e, s) {
+      print([e, s]);
+      return [];
     }
   }
 }

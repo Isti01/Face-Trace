@@ -1,0 +1,45 @@
+import 'package:face_app/bloc/chat_bloc/chat_bloc.dart';
+import 'package:face_app/home/chat_page/search_box.dart';
+import 'package:face_app/home/face_app_home.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class ChatsPage extends StatelessWidget {
+  const ChatsPage({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Theme(
+      data: Theme.of(context).copyWith(canvasColor: Colors.white),
+      child: Padding(
+        padding: PagePadding,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: size.height / 4.5,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Chat',
+                    style: Theme.of(context)
+                        .textTheme
+                        .display1
+                        .apply(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            SearchBox(bloc: BlocProvider.of<ChatBloc>(context)),
+            SliverFillRemaining(
+              child: Material(color: Colors.white),
+              fillOverscroll: true,
+              hasScrollBody: false,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

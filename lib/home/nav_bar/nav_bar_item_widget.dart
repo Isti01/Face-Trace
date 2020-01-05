@@ -23,45 +23,27 @@ class NavBarItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selected = selectedIndex == index;
-
     return GestureDetector(
       onTap: () => onItemSelected(index),
       child: Material(
         type: MaterialType.transparency,
         child: Padding(
           // this way it is easier to tap the navbar items
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          child: AnimatedContainer(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              color: selected ? appColor.color[700] : Color(0x00ffffff),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [_iconWidget, animatedText],
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4, top: 4, bottom: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [_iconWidget, animatedText],
-              ),
-            ),
-            duration: duration,
           ),
         ),
       ),
     );
   }
 
-  Widget get _iconWidget => Container(
-        child: Text(
-          icon,
-          style: TextStyle(inherit: true, fontSize: 20),
-        ),
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white30,
-        ),
-      );
+  Widget get _iconWidget =>
+      Text(icon, style: TextStyle(inherit: true, fontSize: 24));
 
   Widget get animatedText => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -73,18 +55,13 @@ class NavBarItemWidget extends StatelessWidget {
             axisAlignment: -1,
           ),
           child: selectedIndex == index
-              ? Container(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: .6,
-                      ),
-                    ),
+              ? Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: appColor.color[700],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 )
               : SizedBox(),

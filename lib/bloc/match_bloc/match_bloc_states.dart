@@ -4,27 +4,24 @@ class MatchState {
   final List<String> uidList;
   final bool loadingUserList;
   final Map<String, User> users;
-  final int lastIndex;
-
+  final bool failed;
   MatchState({
     this.uidList,
     this.loadingUserList = true,
     this.users,
-    this.lastIndex = 0,
+    this.failed = false,
   });
 
   factory MatchState.init() => MatchState(users: {});
 
-  MatchState update({
-    List<String> userList,
-    Map<String, User> users,
-    int lastIndex,
-  }) =>
+  MatchState update({List<String> uidList, Map<String, User> users}) =>
       MatchState(
-          uidList: userList ?? this.uidList,
-          users: users ?? this.users,
-          loadingUserList: loadingUserList && userList == null,
-          lastIndex: lastIndex ?? this.lastIndex);
+        uidList: uidList ?? this.uidList,
+        users: users ?? this.users,
+        loadingUserList: loadingUserList && uidList == null,
+      );
+
+  factory MatchState.failedLoading() => MatchState(users: {}, failed: true);
 
   @override
   String toString() {
@@ -47,8 +44,10 @@ class UserLoadedEvent extends MatchEvent {
   UserLoadedEvent({this.uid, this.user});
 }
 
-class NewIndexEvent extends MatchEvent {
-  final int newIndex;
+class UserSwipedEvent extends MatchEvent {
+  final String uid;
 
-  NewIndexEvent(this.newIndex);
+  UserSwipedEvent(this.uid);
 }
+
+class LoadingUsersFailedEvent extends MatchEvent {}

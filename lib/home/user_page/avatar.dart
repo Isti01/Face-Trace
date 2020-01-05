@@ -13,30 +13,25 @@ class Avatar extends StatelessWidget {
     if (profileImage == null) return SizedBox();
     final imageSize = MediaQuery.of(context).size.shortestSide * 0.45;
 
-    return SizedBox(
-      child: Padding(
-        padding: EdgeInsets.all(imageSize * 0.15),
-        child: Stack(
-          children: <Widget>[
-            Material(
-              elevation: 4,
-              shape: CircleBorder(),
-              child: Container(
-                height: imageSize,
-                width: imageSize,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImageWithRetry(profileImage),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(999),
-                ),
+    return Stack(
+      children: <Widget>[
+        Material(
+          elevation: 4,
+          shape: CircleBorder(),
+          child: Container(
+            height: imageSize,
+            width: imageSize,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImageWithRetry(profileImage),
+                fit: BoxFit.cover,
               ),
+              borderRadius: BorderRadius.circular(999),
             ),
-            ImageBanner(imageSize: imageSize, color: color)
-          ],
+          ),
         ),
-      ),
+        ImageBanner(imageSize: imageSize, color: color)
+      ],
     );
   }
 }

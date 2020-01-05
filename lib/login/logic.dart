@@ -16,6 +16,7 @@ Future<bool> logInWithGoogle() async {
   try {
     final signIn = GoogleSignIn(scopes: ['email']);
 
+    await signIn.signOut();
     final googleUser = await signIn.signIn();
     final userAuthentication = await googleUser.authentication;
 

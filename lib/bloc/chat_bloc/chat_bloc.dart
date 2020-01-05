@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:face_app/bloc/chat_bloc_states.dart';
-import 'package:face_app/bloc/chat_room_bloc.dart';
+import 'package:face_app/bloc/chat_bloc/chat_bloc_states.dart';
+import 'package:face_app/bloc/chat_room_bloc/chat_room_bloc.dart';
 import 'package:face_app/bloc/data_classes/chat.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
-import 'package:face_app/bloc/match_bloc.dart';
+import 'package:face_app/bloc/match_bloc/match_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirebaseUser user;
@@ -16,11 +17,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final MatchBloc matchBloc;
   final Map<String, ChatRoomBloc> chatRooms = {};
 
+  StreamSubscription searchSubscription;
+  final BehaviorSubject<String> searchSubject = BehaviorSubject();
+
   ChatBloc({this.user, @required this.matchBloc}) {
     chatStream = getChats(user).listen(
       _onChatsLoaded,
       onError: (e, s) => print([e, s]),
     );
+
+    searchSubscription = searchSubject
+        .debounceTime(Duration(milliseconds: 250))
+        .distinct()
+        .listen((filter) => add(FilterChangedEvent(filter)));
   }
 
   _onChatsLoaded(QuerySnapshot snapshot) async {
@@ -67,6 +76,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ChatState newState;
     if (event is ChatsUpdatedEvent) {
       newState = state.update(chats: event.chats);
+    } else if (event is FilterChangedEvent) {
+      newState = state.update(filter: event.filter);
     }
 
     if (newState == null)
@@ -83,6 +94,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   @override
   Future<void> close() async {
+    await searchSubscription?.cancel();
+    await searchSubject?.close();
+
     for (var entry in chatRooms.entries) {
       try {
         await entry.value?.close();

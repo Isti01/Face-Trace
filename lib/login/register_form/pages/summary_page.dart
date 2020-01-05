@@ -1,7 +1,7 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/interest.dart';
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';

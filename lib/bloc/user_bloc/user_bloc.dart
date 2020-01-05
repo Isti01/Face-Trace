@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
-import 'package:face_app/bloc/user_event.dart';
+import 'package:face_app/bloc/user_bloc/user_event.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -39,8 +39,9 @@ class UserBloc extends Bloc<UserEvent, User> {
     if (event is NewUserEvent &&
         (state.user != event.newUser || event.newUser == null)) {
       yield User(user: event.newUser);
-    } else if (event is UserDataUpdated)
+    } else if (event is UserDataUpdated) {
       yield User.fromMap(event.userData.data, state.user);
+    }
   }
 
   @override

@@ -10,6 +10,7 @@ class User {
   final DateTime createdAt;
   final String description;
   final Gender gender;
+  final List<Gender> attractedTo;
   final List<Interest> interests;
   final String name;
   final String profileImage;
@@ -29,6 +30,7 @@ class User {
     this.user,
     this.fetchedData = false,
     this.initial = false,
+    this.attractedTo,
   });
 
   @override
@@ -41,11 +43,13 @@ class User {
           createdAt == other.createdAt &&
           description == other.description &&
           gender == other.gender &&
+          attractedTo == other.attractedTo &&
           interests == other.interests &&
           name == other.name &&
           profileImage == other.profileImage &&
           user == other.user &&
-          other.initial == initial;
+          fetchedData == other.fetchedData &&
+          initial == other.initial;
 
   @override
   int get hashCode =>
@@ -54,19 +58,22 @@ class User {
       createdAt.hashCode ^
       description.hashCode ^
       gender.hashCode ^
+      attractedTo.hashCode ^
       interests.hashCode ^
       name.hashCode ^
       profileImage.hashCode ^
-      user.hashCode;
+      user.hashCode ^
+      fetchedData.hashCode ^
+      initial.hashCode;
 
   factory User.fromMap(Map<String, dynamic> map, [FirebaseUser user]) {
     if (map == null) return User(user: user, fetchedData: true);
-
     return User(
       appColor: AppColorExtension.parse(map['appColor']),
       birthDate: parseTimestamp(map['birthDate']),
       createdAt: parseTimestamp(map['createdAt']),
       description: map['description'],
+      attractedTo: GenderExtension.parseList(map['attractedTo']),
       gender: GenderExtension.parse(map['gender']),
       interests: InterestExtension.parseList(map['interests']),
       name: map['name'],
@@ -84,7 +91,8 @@ class User {
       gender != null ||
       interests != null ||
       name != null ||
-      profileImage != null;
+      profileImage != null ||
+      attractedTo != null;
 
   static DateTime parseTimestamp(source) =>
       source is Timestamp ? source.toDate() : null;
@@ -103,14 +111,6 @@ class User {
 
   @override
   String toString() {
-    return 'User{appColor: $appColor,'
-        ' birthDate: $birthDate,'
-        ' createdAt: $createdAt,'
-        ' description: $description,'
-        ' gender: $gender,'
-        ' interests: $interests,'
-        ' name: $name,'
-        ' profileImage: $profileImage,'
-        ' user: $user, fetchedData: $fetchedData}';
+    return 'User{appColor: $appColor, birthDate: $birthDate, createdAt: $createdAt, description: $description, gender: $gender, attractedTo: $attractedTo, interests: $interests, name: $name, profileImage: $profileImage, user: $user, fetchedData: $fetchedData, initial: $initial}';
   }
 }

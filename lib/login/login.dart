@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
-import 'package:face_app/bloc/register_bloc.dart';
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/login/choose_face/choose_face.dart';
 import 'package:face_app/login/login_email/login_email.dart';
 import 'package:face_app/login/login_theme.dart';
@@ -30,19 +32,20 @@ class _LoginState extends State<Login> {
       GlobalKey(debugLabel: "_backgroundKey");
   PageController controller;
   FirebaseUser user;
-
+  AppColor initialColor;
   final RegisterBloc bloc = RegisterBloc();
 
   @override
   void initState() {
     super.initState();
+    initialColor = bloc.state.color;
     user = widget.initialUser;
     controller = PageController(initialPage: widget.startPage);
   }
 
   List<Widget> pages(BuildContext context, RegisterState state) => [
         LoginEmail(
-          onLoginCompleted: () => onLoginCompleted(context, state),
+          onLoginCompleted: () => onLoginCompleted(context),
           color: state.color,
         ),
         RegisterForm(
@@ -50,7 +53,6 @@ class _LoginState extends State<Login> {
           backgroundKey: _backgroundKey,
           bloc: bloc,
           onRegistrationFinished: (List<Face> faces) async {
-            print(faces.length);
             if (faces.length == 1) {
               // did it this way, because state mapping is async and I cannot await it
 
@@ -80,7 +82,7 @@ class _LoginState extends State<Login> {
           return Scaffold(
             body: DynamicGradientBackground(
               key: _backgroundKey,
-              color: state.color,
+              color: initialColor,
               child: PageView(
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
@@ -94,16 +96,18 @@ class _LoginState extends State<Login> {
     );
   }
 
-  onLoginCompleted(BuildContext context, RegisterState state) async {
-    try {
-      user = await auth.currentUser();
-      final document = await getUserData(user);
+  onLoginCompleted(BuildContext context) async {
+    DocumentSnapshot document;
+    user = await auth.currentUser();
 
-      if (document?.data != null && document.data.isNotEmpty) return;
+    try {
+      document = await getUserData(user);
     } catch (e, s) {
       print([e, s]);
     }
-    this.setState(() {});
+    if (document?.data != null && document.data.isNotEmpty) return;
+
+    if (mounted) this.setState(() {});
 
     final name = user.displayName;
 

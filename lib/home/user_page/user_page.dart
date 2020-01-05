@@ -1,6 +1,7 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
-import 'package:face_app/bloc/user_bloc.dart';
+import 'package:face_app/bloc/user_bloc/user_bloc.dart';
+import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/home/user_page/avatar.dart';
 import 'package:face_app/home/user_page/editable_field.dart';
 import 'package:face_app/home/user_page/interests.dart';
@@ -18,30 +19,61 @@ class UserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = CurrentUser.of(context).user;
     final textTheme = Theme.of(context).textTheme;
+    final size = MediaQuery.of(context).size;
+
+    final difference = size.shortestSide * 0.45 / 1.65;
+
+    final topPadding = size.height / 8 + difference;
+    final avatarTop = topPadding - difference;
 
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: 4),
-          Avatar(
-            profileImage: user.profileImage,
-            color: user.appColor.color[800],
-          ),
-          _name(user, context, textTheme),
-          ..._divider(textTheme.title, 'Leírás'),
-          _description(user, context, textTheme),
-          ..._divider(textTheme.title, 'Érdeklődési kör'),
-          Interests(interests: user.interests, color: user.appColor),
-          ..._divider(),
-          OutlineButton(
-            child: Text("Kijelentkezés 👋"),
-            onPressed: () => auth.signOut(),
-            shape: AppBorder,
-          ),
-        ],
+      child: Padding(
+        padding: PagePadding,
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: topPadding),
+              child: Material(
+                color: Colors.white,
+                elevation: 4,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 16,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height:
+                            size.shortestSide * 0.45 - (topPadding - avatarTop),
+                      ),
+                      _name(user, context, textTheme),
+                      ..._divider(textTheme.title, 'Leírás'),
+                      _description(user, context, textTheme),
+                      ..._divider(textTheme.title, 'Érdeklődési kör'),
+                      Interests(
+                          interests: user.interests, color: user.appColor),
+                      ..._divider(),
+                      OutlineButton(
+                        child: Text("Kijelentkezés 👋"),
+                        onPressed: () => auth.signOut(),
+                        shape: AppBorder,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              child: Avatar(profileImage: user.profileImage),
+              top: avatarTop,
+            ),
+          ],
+        ),
       ),
     );
   }

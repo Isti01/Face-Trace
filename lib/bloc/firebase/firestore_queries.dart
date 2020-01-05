@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:face_app/bloc/firebase/run_face_model.dart';
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -57,6 +57,8 @@ Future<void> saveUserData(FirebaseUser user, RegisterState state) async {
       "appColor": clearEnum(state.color.toString()),
       "interests":
           state.interests.map((s) => s.toString()).map(clearEnum).toList(),
+      "attractedTo":
+          state.attractedTo.map((s) => s.toString()).map(clearEnum).toList(),
       "description": state.description,
       "birthDate": state.birthDate,
       "createdAt": FieldValue.serverTimestamp(),
@@ -108,6 +110,7 @@ Future<DocumentReference> sendMessage(
   String message,
   FirebaseUser user,
 ) async {
+  if (message?.trim()?.isEmpty ?? true) return null;
   return chats.document(chatId).collection('messages').add({
     'message': message,
     'createdAt': DateTime.now(),

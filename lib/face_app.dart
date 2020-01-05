@@ -1,6 +1,5 @@
-import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
-import 'package:face_app/bloc/user_bloc.dart';
+import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/login/login.dart';
 import 'package:face_app/splash_screen/spalsh_screen.dart';
@@ -36,24 +35,17 @@ class _FaceAppState extends State<FaceApp> {
           bloc: userBloc,
           builder: (BuildContext context, User state) {
             if (state.initial) return SplashScreen();
-
             final user = state.user;
 
             if (user == null) return Login();
-
             if (!state.fetchedData) return SplashScreen();
 
             if (!state.hasData) return Login(startPage: 1, initialUser: user);
 
-            final color = state.appColor;
-
             return CurrentUser(
               key: ValueKey(user.uid),
               user: state,
-              child: AnimatedTheme(
-                data: ThemeData(primarySwatch: color.color),
-                child: FaceAppHome(user: user, appColor: color),
-              ),
+              child: FaceAppHome(user: user),
             );
           },
         ),

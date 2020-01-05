@@ -1,4 +1,4 @@
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -5,7 +5,9 @@ import 'package:bloc/bloc.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
-import 'package:face_app/bloc/match_bloc_states.dart';
+import 'package:face_app/bloc/match_bloc/match_bloc_states.dart';
+
+const NumDisplayedUsers = 3;
 
 class MatchBloc extends Bloc<MatchEvent, MatchState> {
   MatchBloc() {
@@ -13,22 +15,21 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }
 
   getUsers() async {
-    bool finished = false;
-    int i = 0;
-    while (i++ < 3 && !finished) {
-      await Connectivity()
-          .onConnectivityChanged
-          .where((event) => event != ConnectivityResult.none)
-          .first
-          .then((_) async {
-        final userList = await getUserList();
-        add(UserListUpdatedEvent(userList));
+    bool successful = false;
 
-        finished = true;
+    await Connectivity()
+        .onConnectivityChanged
+        .where((event) => event != ConnectivityResult.none)
+        .first
+        .then((_) async {
+      final userList = await getUserList();
+      add(UserListUpdatedEvent(userList));
+      userList.getRange(0, math.min(5, userList.length)).forEach(loadUser);
 
-        userList.getRange(0, math.min(5, userList.length)).forEach(loadUser);
-      }).catchError((e, s) => print([e, s]));
-    }
+      successful = true;
+    }).catchError((e, s) => print([e, s]));
+
+    if (!successful) add(LoadingUsersFailedEvent());
   }
 
   Future<User> getUser(String uid) async {
@@ -55,13 +56,15 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     MatchState newState;
 
     if (event is UserListUpdatedEvent) {
-      newState = state.update(userList: event.uidList);
+      newState = state.update(uidList: event.uidList);
     } else if (event is UserLoadedEvent) {
       final map = state.users;
       map[event.uid] = event.user;
       newState = state.update(users: map);
-    } else if (event is NewIndexEvent) {
-      newState = state.update(lastIndex: event.newIndex);
+    } else if (event is UserSwipedEvent) {
+      newState = state.update(uidList: state.uidList..remove(event.uid));
+    } else if (event is LoadingUsersFailedEvent) {
+      newState = MatchState.failedLoading();
     }
 
     if (newState == null)
@@ -75,13 +78,18 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     print([error, stacktrace]);
   }
 
-  onSwiped(bool right, String uid, int index) {
+  onSwiped(bool right, String uid) {
     final uids = state.uidList;
+    final index = uids.indexOf(uid);
+    if (index == -1) return;
+    add(UserSwipedEvent(uid));
 
-    if (index >= uids.length) return;
-    uids.getRange(index, math.min(index + 3, uids.length)).forEach(loadUser);
+    final newIndex = index + 1;
 
-    add(NewIndexEvent(index + 1));
+    if (newIndex >= uids.length) return;
+    uids
+        .getRange(newIndex, math.min(newIndex + NumDisplayedUsers, uids.length))
+        .forEach(loadUser);
 
     swipeUser(uid: uid, right: right);
   }

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:face_app/bloc/firebase/download_image.dart';
-import 'package:face_app/bloc/register_bloc.dart';
-import 'package:face_app/bloc/register_bloc_states.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc.dart';
+import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/get_pages.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
 import 'package:face_app/util/page_indicator.dart';

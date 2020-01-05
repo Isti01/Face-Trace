@@ -1,10 +1,14 @@
-import 'dart:math';
-
+import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
+import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/home/match_page/card_description.dart';
 import 'package:face_app/home/match_page/loading_card.dart';
 import 'package:face_app/home/match_page/user_page/user_page.dart';
 import 'package:face_app/util/animated_transform.dart';
+import 'package:face_app/util/constants.dart';
+import 'package:face_app/util/current_user.dart';
+import 'package:face_app/util/gradient_raised_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image/network.dart';
 
@@ -70,47 +74,96 @@ class DraggableCardState extends State<DraggableCard> {
 
   @override
   Widget build(BuildContext context) {
-    final loading = widget.user == null;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      child: GestureDetector(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (c) => UserPage()),
+    if (widget.user == null)
+      return LoadingCard(currentUser: CurrentUser.of(context).user);
+
+    final size = MediaQuery.of(context).size;
+    final transform = -offset / 2500;
+
+    return AnimatedTransform(
+      transform: Matrix4.skewX(transform)
+        ..translate(-offset)
+        ..rotateZ(transform),
+      origin: Alignment.topCenter,
+      child: Padding(
+        child: Material(
+          borderRadius: AppBorderRadius,
+          elevation: 4,
+          child: ClipRRect(
+            borderRadius: AppBorderRadius,
+            child: Stack(
+              children: [
+                AbsorbPointer(
+                  absorbing: widget.user == null,
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (c) => UserPage()),
+                    ),
+                    onHorizontalDragStart: _onStart,
+                    onHorizontalDragUpdate: _onUpdate,
+                    onHorizontalDragEnd: _onEnd,
+                    child: buildImage(size),
+                  ),
+                ),
+                if (widget.user != null)
+                  Positioned(
+                    right: 0,
+                    left: 0,
+                    top: size.shortestSide * 0.9 - 44,
+                    child: _buttons,
+                  ),
+              ],
+            ),
+          ),
         ),
-        onHorizontalDragEnd: loading ? null : _onEnd,
-        onHorizontalDragStart: loading ? null : _onStart,
-        onHorizontalDragUpdate: loading ? null : _onUpdate,
-        child: loading ? LoadingCard() : _body(),
+        padding: PagePadding,
       ),
+      duration: _duration,
     );
   }
 
-  Widget _body() {
-    final borderRadius = BorderRadius.circular(25);
-
-    return AnimatedTransform(
-      transform: Matrix4.translationValues(-offset, 0, 0)
-        ..rotateZ(offset / (250 * pi)),
-      origin: Alignment.topCenter,
-      child: Material(
-        borderRadius: borderRadius,
-        elevation: 4,
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image(
+  Column buildImage(Size size) {
+    // todo create separate widget for this
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: size.shortestSide * 0.9,
+          width: size.shortestSide * 0.9,
+          child: widget.user == null
+              ? LoadingCard.loadingEmoji(widget.user.gender.emoji)
+              : Image(
+                  loadingBuilder: (context, child, e) => e == null
+                      ? child
+                      : LoadingCard.loadingEmoji(widget.user.gender.emoji),
                   fit: BoxFit.cover,
                   image: NetworkImageWithRetry(widget.user.profileImage),
                 ),
-              ),
-              CardDescription(user: widget.user),
-            ],
-          ),
         ),
-      ),
-      duration: _duration,
+        SizedBox(height: 20),
+        CardDescription(user: widget.user),
+      ],
+    );
+  }
+
+  Widget get _buttons {
+    final AppColor color = CurrentUser.of(context).user.appColor;
+    return ButtonBar(
+      mainAxisSize: MainAxisSize.max,
+      alignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        GradientRaisedButton.circle(
+          child: Text('💩', style: TextStyle(fontSize: 24)),
+          gradient: LinearGradient(colors: color.next.colors),
+          onTap: () => swipe(false),
+        ),
+        GradientRaisedButton.circle(
+          child: Text('😍', style: TextStyle(fontSize: 24)),
+          gradient: LinearGradient(colors: color.colors),
+          onTap: () => swipe(true),
+        ),
+      ],
     );
   }
 }

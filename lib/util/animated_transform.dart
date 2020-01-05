@@ -154,7 +154,7 @@ class _AnimatedTransformState
   @override
   Widget build(BuildContext context) {
     return Transform(
-      alignment: _origin.evaluate(animation),
+      alignment: _origin?.evaluate(animation),
       transform: _transform?.evaluate(animation),
       child: Container(
         child: widget.child,

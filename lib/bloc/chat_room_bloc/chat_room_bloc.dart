@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:face_app/bloc/chat_room_states.dart';
+import 'package:face_app/bloc/chat_room_bloc/chat_room_states.dart';
 import 'package:face_app/bloc/data_classes/chat_message.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart' as db;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   final FirebaseUser user;
   final String chatRoomId;
-  bool loading = false;
   StreamSubscription newMessagesStream;
   final now = DateTime.now();
 
@@ -32,13 +31,20 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   sendMessage(String message) => db.sendMessage(chatRoomId, message, user);
 
   nextMessages() async {
-    if (loading) return;
-    loading = true;
+    if (state.loadedAll || (state.loading ?? false)) return;
+
+    add(LoadingMessagesEvent());
+
     final snapshot = await db.getMessages(chatRoomId, state.lastDoc, now);
 
     final last = snapshot.documents.isNotEmpty ? snapshot.documents.last : null;
+
+    if (last == null) {
+      add(AllMessagesLoaded());
+      return;
+    }
     final messages = parseDocs(snapshot);
-    loading = false;
+
     add(MessagesLoadedEvent(messages, last));
   }
 
@@ -65,10 +71,15 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
       if (!event.newMessages) messages.addAll(event.messages);
 
       newState = state.update(
+        loading: false,
         messages: messages.toList(),
       );
       if (event.lastDoc != null)
         newState = newState.update(lastDoc: event.lastDoc);
+    } else if (event is LoadingMessagesEvent) {
+      newState = state.update(loading: true);
+    } else if (event is AllMessagesLoaded) {
+      newState = state.update(loadedAll: true, loading: false);
     }
 
     if (newState == null)
