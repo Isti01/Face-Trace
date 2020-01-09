@@ -1,3 +1,4 @@
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -29,16 +30,16 @@ class _NamePageState extends State<NamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return FormPage(
-      title: "Add meg a neved!",
+      title: localizations.nameQuestion,
       child: TextField(
         onSubmitted: (text) {
           widget.onNameChanged(text);
           widget.onFinished();
         },
-        decoration: InputDecoration(
-          hintText: "A nevem...",
-        ),
+        decoration: InputDecoration(hintText: localizations.nameHint),
         controller: controller,
       ),
     );

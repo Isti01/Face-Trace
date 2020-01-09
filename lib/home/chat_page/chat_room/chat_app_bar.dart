@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/util/transparent_appbar.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +19,7 @@ class ChatAppBar extends StatelessWidget {
             Hero(
               tag: partner.uid + 'chatAvatar',
               child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(
-                  partner.profileImage,
-                ),
+                backgroundImage: NetworkImage(partner.profileImage),
               ),
             ),
             SizedBox(width: 12),

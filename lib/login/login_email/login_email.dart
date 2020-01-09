@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/login_logic.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/login_email/forgot_password_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
@@ -34,6 +35,8 @@ class _LoginEmailState extends State<LoginEmail>
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return ListView(
       physics: BouncingScrollPhysics(),
       children: [
@@ -74,7 +77,7 @@ class _LoginEmailState extends State<LoginEmail>
                               vertical: 4,
                               horizontal: 8,
                             ),
-                            child: Text('Elfelejtette jelszavát?'),
+                            child: Text(localizations.forgotPassword),
                           ),
                         )),
                   ),
@@ -90,7 +93,7 @@ class _LoginEmailState extends State<LoginEmail>
           ),
         ),
         Text(
-          'Vagy',
+          localizations.or,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.title,
         ),
@@ -105,12 +108,12 @@ class _LoginEmailState extends State<LoginEmail>
                 if (await logInWithGoogle())
                   widget.onLoginCompleted();
                 else
-                  showToast(context, title: "A bejelentkezés sikertelen");
+                  showToast(context, title: localizations.signInFailed);
               },
               icon: Image.asset('assets/google.png', height: 24, width: 24),
               label: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Text('Belépés Google-el'),
+                child: Text(localizations.signInWithGoogle),
               ),
               textColor: Colors.red,
             ),

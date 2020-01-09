@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/data_classes/interest.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -35,8 +36,11 @@ class _InterestsPageState extends State<InterestsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return FormPage(
-      title: "Mi az érdeklődési köröd? ${widget.pageNum}/${widget.numPages}",
+      title:
+          "${localizations.interestsQuestion} ${widget.pageNum}/${widget.numPages}",
       child: SizedBox(
         width: double.infinity,
         child: Wrap(
@@ -45,7 +49,7 @@ class _InterestsPageState extends State<InterestsPage> {
           children: [
             for (Interest interest in widget.choices)
               ChoiceWidget(
-                text: interest.text,
+                text: interest.text(context),
                 selected: selected.contains(interest),
                 onSelected: (val) {
                   if (val) {

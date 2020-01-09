@@ -1,3 +1,4 @@
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 
 class EditableField extends StatefulWidget {
@@ -53,6 +54,7 @@ class _EditableFieldState extends State<EditableField> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     if (!editing) return simpleText;
 
     return Column(
@@ -81,13 +83,13 @@ class _EditableFieldState extends State<EditableField> {
           children: [
             IconButton(
               icon: Text('👍', style: TextStyle(fontSize: 24)),
-              tooltip: "Mentés",
+              tooltip: localizations.save,
               onPressed: editCompleted,
             ),
             SizedBox(width: 24),
             IconButton(
               icon: Text('🔙', style: TextStyle(fontSize: 24)),
-              tooltip: "Mégsem",
+              tooltip: localizations.cancel,
               onPressed: cancelledEdit,
             ),
           ],

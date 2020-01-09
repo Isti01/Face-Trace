@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,14 @@ class _BirthDatePageState extends State<BirthDatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final size = MediaQuery.of(context).size;
 
     final cupertinoTheme = CupertinoTheme.of(context);
     final textTheme = cupertinoTheme.textTheme;
     return FormPage(
-      title: "Mikor születtél?",
+      title: localizations.birthDateQuestion,
       child: SizedBox(
         height: size.height * 0.4,
         child: CupertinoTheme(

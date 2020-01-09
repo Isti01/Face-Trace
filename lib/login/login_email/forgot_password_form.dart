@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/login_logic.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/input_field.dart';
@@ -41,6 +42,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   Widget buildSheet(BuildContext context, _) {
+    final localizations = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Form(
@@ -66,18 +68,18 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             ),
             SizedBox(height: 12),
             Text(
-              'Elfelejtette a jelszavát?',
+              localizations.forgotPassword,
               style: Theme.of(context).textTheme.title,
               textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: InputField(
-                labelText: "Email cím",
+                labelText: localizations.emailAddress,
                 icon: Icons.email,
                 controller: controller,
-                validator: validateEmail,
-                onFieldSubmitted: (email) => submitEmail(),
+                validator: (s) => validateEmail(context, s),
+                onFieldSubmitted: (email) => submitEmail(context),
               ),
             ),
             Padding(
@@ -88,9 +90,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                 textColor: AppTextColor,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text("Jelszó visszaállítása"),
+                  child: Text(localizations.resetPassword),
                 ),
-                onPressed: () => submitEmail(),
+                onPressed: () => submitEmail(context),
               ),
             )
           ],
@@ -99,18 +101,20 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     );
   }
 
-  submitEmail() {
+  submitEmail(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final onFailed = (error) => showToast(
           context,
-          title: "Új jelszó kérése sikertelen",
+          title: localizations.failedToRequestNewPassword,
           message: error,
         );
 
     if (_formKey.currentState.validate()) {
       Navigator.of(context).pop();
 
-      if (forgotPassword(controller.text, onFailed))
-        showToast(context, title: "Jelszó visszaállító email elküldve.");
+      if (forgotPassword(context, controller.text, onFailed))
+        showToast(context, title: localizations.passwordResetEmailSent);
       else
         onFailed(null);
     }

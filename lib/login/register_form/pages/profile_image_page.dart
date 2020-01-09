@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +35,13 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final size = MediaQuery.of(context).size.shortestSide * 0.4;
 
     return FormPage(
-      title: "Hogy nézel ki?",
-      description: "Válassz ki egy képet, amin rajta vagy!",
+      title: localizations.imageQuestion,
+      description: localizations.imageHint,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -59,14 +62,14 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
             children: [
               RaisedButton.icon(
                 icon: Icon(Icons.image),
-                label: Text("Válassz egy képet!"),
+                label: Text(localizations.existingImage),
                 textColor: widget.color.color[800],
                 color: Colors.white,
                 onPressed: () => pickImage(ImageSource.gallery),
               ),
               RaisedButton.icon(
                 icon: Icon(Icons.camera_alt),
-                label: Text("Készíts egy képet!"),
+                label: Text(localizations.newImage),
                 textColor: widget.color.color[800],
                 color: Colors.white,
                 onPressed: () => pickImage(ImageSource.camera),
@@ -98,6 +101,8 @@ class ProfileImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     if (path != null)
       return Image.file(
         File(path),
@@ -117,7 +122,7 @@ class ProfileImage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: Text(
-                "Adj meg egy képet magadról",
+                localizations.imageHint,
                 style: Theme.of(context).textTheme.subtitle,
                 textAlign: TextAlign.center,
               ),

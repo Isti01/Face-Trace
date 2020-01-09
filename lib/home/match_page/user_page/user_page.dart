@@ -2,6 +2,7 @@ import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/match_page/card_button.dart';
 import 'package:face_app/home/match_page/user_page/user_details.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
 import 'package:face_app/util/simple_scroll_behavior.dart';
@@ -19,7 +20,13 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final currentUser = CurrentUser.of(context).user;
     final theme = Theme.of(context);
 
@@ -48,7 +55,7 @@ class _UserPageState extends State<UserPage> {
                       onPressed: () => Navigator.pop(context),
                     ),
                     title: Text(
-                      'Felfedezés',
+                      localizations.discover,
                       style: theme.textTheme.title.apply(color: Colors.white),
                     ),
                   ),

@@ -1,20 +1,26 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/image_preview.dart';
 import 'package:flutter/material.dart';
 
-class UserImage extends StatelessWidget {
+class UserImage extends StatefulWidget {
   final User user;
 
   const UserImage({Key key, this.user}) : super(key: key);
+
+  @override
+  _UserImageState createState() => _UserImageState();
+}
+
+class _UserImageState extends State<UserImage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final imageSize = size.shortestSide * 0.8 / 2;
-    final imageUrl = user?.profileImage;
+    final imageUrl = widget.user?.profileImage;
     final hasImage = imageUrl != null;
-    final tag = (user.profileImage ?? user.uid) + 'matchUserImage';
+    final tag =
+        (widget.user.profileImage ?? widget.user.uid) + 'matchUserImage';
     return Center(
       child: Hero(
         tag: tag,
@@ -23,6 +29,7 @@ class UserImage extends StatelessWidget {
               ? () => Navigator.push(
                   context,
                   MaterialPageRoute(
+                    maintainState: true,
                     builder: (c) => ImagePreview(imageUrl: imageUrl, tag: tag),
                   ))
               : null,
@@ -32,10 +39,7 @@ class UserImage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: AppBorderRadius,
               child: imageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                    )
+                  ? Image.network(imageUrl, fit: BoxFit.cover)
                   : SizedBox(),
             ),
           ),

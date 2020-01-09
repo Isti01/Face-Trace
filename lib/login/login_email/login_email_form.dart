@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/login_logic.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/input_field.dart';
 import 'package:flutter/material.dart';
 
@@ -56,6 +57,7 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Form(
       onChanged: () => this.setState(() {}),
       key: widget.formKey,
@@ -65,9 +67,9 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
           InputField(
             controller: widget.emailController,
             textInputAction: TextInputAction.next,
-            labelText: "Email cím",
+            labelText: localizations.emailAddress,
             icon: Icons.email,
-            validator: validateEmail,
+            validator: (s) => validateEmail(context, s),
             onFieldSubmitted: (_) {
               FocusScope.of(context).requestFocus(passNode);
             },
@@ -81,10 +83,10 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
                   controller: widget.passController,
                   node: passNode,
                   obscureText: obscure,
-                  labelText: "Jelszó",
+                  labelText: localizations.password,
                   icon: Icons.lock,
                   validator: (val) =>
-                      validatePasswordStrength(val, !widget.register),
+                      validatePasswordStrength(context, val, !widget.register),
                   textInputAction: widget.register
                       ? TextInputAction.next
                       : TextInputAction.done,
@@ -108,11 +110,11 @@ class _LoginEmailFormState extends State<LoginEmailForm> {
             divider,
             InputField(
               controller: widget.passAgainController,
-              labelText: "Jelszó Újra",
+              labelText: localizations.passwordAgain,
               node: passAgainNode,
               icon: Icons.lock,
               obscureText: obscure,
-              validator: (_) => validatePasswords(pass, passAgain),
+              validator: (_) => validatePasswords(context, pass, passAgain),
               onFieldSubmitted: (_) {
                 FocusScope.of(context).unfocus();
                 widget.onFormSubmitted(email, pass, passAgain);

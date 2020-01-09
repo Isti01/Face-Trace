@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -66,7 +67,7 @@ class _TextInputBarState extends State<TextInputBar> {
                     onPressed: () => widget.sendImage(ImageSource.camera),
                   ),
                   SizedBox(width: 4),
-                  _textField(textTheme),
+                  _textField(context, textTheme),
                   IconButton(
                     icon: Icon(Icons.send, color: Colors.white70),
                     onPressed: _submitText,
@@ -80,7 +81,7 @@ class _TextInputBarState extends State<TextInputBar> {
     );
   }
 
-  Flexible _textField(TextTheme textTheme) {
+  Flexible _textField(BuildContext context, TextTheme textTheme) {
     final style = textTheme.subhead.apply(color: Colors.white);
 
     return Flexible(
@@ -100,7 +101,7 @@ class _TextInputBarState extends State<TextInputBar> {
             contentPadding: EdgeInsets.symmetric(horizontal: 12),
             filled: true,
             fillColor: Colors.white24,
-            hintText: "Üzenj valamit!",
+            hintText: AppLocalizations.of(context).sendAMessage,
             hintStyle: style.apply(color: Colors.white70),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(999),

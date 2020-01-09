@@ -1,3 +1,4 @@
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/material.dart';
 
@@ -28,13 +29,15 @@ class _DescriptionPageState extends State<DescriptionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return FormPage(
-      title: "Mesélj magadról!",
+      title: localizations.descriptionQuestion,
       child: TextField(
         controller: controller,
         minLines: 5,
         maxLines: null,
-        decoration: InputDecoration(hintText: "Milyen vagy?"),
+        decoration: InputDecoration(hintText: localizations.descriptionHint),
         onChanged: widget.onDescriptionChanged,
         onSubmitted: widget.onSubmitted,
       ),

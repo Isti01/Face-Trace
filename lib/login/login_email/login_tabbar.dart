@@ -1,3 +1,4 @@
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 
 class LoginTabBar extends StatelessWidget {
@@ -7,6 +8,8 @@ class LoginTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: ClipRRect(
@@ -28,8 +31,8 @@ class LoginTabBar extends StatelessWidget {
             ),
             indicatorColor: Colors.transparent,
             tabs: [
-              Tab(child: Center(child: Text('Meglévő'))),
-              Tab(child: Center(child: Text('Új')))
+              Tab(child: Center(child: Text(localizations.existing))),
+              Tab(child: Center(child: Text(localizations.newAccount)))
             ],
           ),
         ),

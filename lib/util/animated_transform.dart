@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// modified version of AnimatedContainer
+/// modified version of AnimatedContainer flutter/lib/src/widgets/implicit_animations.dart
+
 /// I needed a way to change the origin of the transform
 class AnimatedTransform extends ImplicitlyAnimatedWidget {
   /// Creates a container that animates its parameters implicitly.

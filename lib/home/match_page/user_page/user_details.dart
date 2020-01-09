@@ -3,6 +3,7 @@ import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/match_page/user_page/user_image.dart';
 import 'package:face_app/home/user_page/interests.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/gallery.dart';
 import 'package:face_app/util/page_divider.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class UserDetails extends StatelessWidget {
   const UserDetails({Key key, this.user}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final textTheme = Theme.of(context).textTheme.apply(
           displayColor: Colors.white,
           bodyColor: Colors.white,
@@ -34,7 +37,7 @@ class UserDetails extends StatelessWidget {
           ),
           if ((user?.images?.length ?? 0) > 0) ...[
             PageDivider(
-              text: "Galéria",
+              text: localizations.gallery,
               addPadding: false,
               style: textTheme.title,
               color: Colors.white54,
@@ -43,7 +46,7 @@ class UserDetails extends StatelessWidget {
           ],
           if (user?.description?.trim()?.isNotEmpty ?? false) ...[
             PageDivider(
-              text: "Leírás",
+              text: localizations.description,
               addPadding: false,
               style: textTheme.title,
               color: Colors.white54,
@@ -52,7 +55,7 @@ class UserDetails extends StatelessWidget {
           ],
           if ((user?.interests?.length ?? 0) > 0) ...[
             PageDivider(
-              text: "Érdeklődési kör",
+              text: localizations.interests,
               addPadding: false,
               style: textTheme.title,
               color: Colors.white54,
@@ -65,7 +68,7 @@ class UserDetails extends StatelessWidget {
                   .map(((Interest interest) => FaceAppChip(
                         appColor: user.appColor,
                         color: Colors.white24,
-                        interest: interest.text,
+                        interest: interest.text(context),
                         textTheme: textTheme,
                       )))
                   .toList(),
@@ -73,7 +76,7 @@ class UserDetails extends StatelessWidget {
           ],
           if ((user?.attractedTo?.length ?? 0) > 1) ...[
             PageDivider(
-              text: "Vonzódik utána",
+              text: localizations.attractedTo,
               addPadding: false,
               style: textTheme.title,
               color: Colors.white54,
@@ -86,7 +89,7 @@ class UserDetails extends StatelessWidget {
                   .map(((Gender gender) => FaceAppChip(
                         appColor: user.appColor,
                         color: Colors.white24,
-                        interest: gender.text,
+                        interest: gender.text(context),
                         textTheme: textTheme,
                       )))
                   .toList(),

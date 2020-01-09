@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/login_logic.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/login_email/login_email_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
@@ -38,6 +39,7 @@ class _EmailFormState extends State<EmailForm>
   }
 
   onSubmitted(String email, String pass, String passAgain) async {
+    final localizations = AppLocalizations.of(context);
     FocusScope.of(context).unfocus();
 
     if (isFormValid) {
@@ -45,14 +47,14 @@ class _EmailFormState extends State<EmailForm>
 
       final onFailed = (error) => showToast(context,
           title: widget.register
-              ? 'A regisztráció sikertelen'
-              : 'A belépés sikertelen',
+              ? localizations.registerFailed
+              : localizations.signInFailed,
           message: error);
 
       if (widget.register)
-        successful = await register(email, pass, onFailed);
+        successful = await register(context, email, pass, onFailed);
       else
-        successful = await logIn(email, pass, onFailed);
+        successful = await logIn(context, email, pass, onFailed);
 
       if (successful) widget.onLoginCompleted();
     }
@@ -61,6 +63,9 @@ class _EmailFormState extends State<EmailForm>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    final localizations = AppLocalizations.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 44),
       child: Center(
@@ -99,7 +104,9 @@ class _EmailFormState extends State<EmailForm>
                   padding:
                       const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                   child: Text(
-                    widget.register ? "Regisztráció" : "Bejelentkezés",
+                    widget.register
+                        ? localizations.register
+                        : localizations.signIn,
                     style: Theme.of(context).textTheme.title,
                   ),
                 ),

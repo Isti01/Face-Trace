@@ -83,6 +83,11 @@ class _ToastWidgetState extends State<ToastWidget>
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
 
+    final theme = Theme.of(context).textTheme.apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        );
+
     return Align(
       alignment: Alignment.topCenter,
       child: Transform.translate(
@@ -102,12 +107,11 @@ class _ToastWidgetState extends State<ToastWidget>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (widget.title != null)
-                      Text(widget.title,
-                          style: Theme.of(context).textTheme.title),
+                      Text(widget.title, style: theme.title),
                     if (widget.message != null)
                       Padding(
                         padding: EdgeInsets.all(8),
-                        child: Text(widget.message),
+                        child: Text(widget.message, style: theme.body2),
                       ),
                   ],
                 ),

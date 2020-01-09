@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
@@ -40,10 +41,11 @@ class _ChooseFaceState extends State<ChooseFace> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final color = widget.color.color[800];
     final size = MediaQuery.of(context).size.shortestSide * .6;
     return FormPage(
-      title: "Hol vagy a képen?",
+      title: localizations.whereAreYou,
       child: SizedBox(
         height: size,
         width: size,
@@ -80,7 +82,7 @@ class _ChooseFaceState extends State<ChooseFace> {
                     ),
                   ),
                 ),
-              Text('Kijelöltem magam!'),
+              Text(localizations.selectedMyself),
             ],
           ),
           onPressed: selectedFace != null ? onSubmit : null,

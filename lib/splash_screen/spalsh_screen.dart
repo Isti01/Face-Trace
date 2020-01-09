@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/splash_screen/shape.dart';
+import 'package:face_app/util/constants.dart';
 import 'package:flutter/material.dart';
 
 const MaxOffset = 25.0;
@@ -84,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Transform.scale(
             scale: textAnimation.value,
             child: Text(
-              "Face App",
+              AppName,
               style: Theme.of(context).textTheme.title.copyWith(
                     fontSize: (MediaQuery.of(context).size.width / 6),
                   ),

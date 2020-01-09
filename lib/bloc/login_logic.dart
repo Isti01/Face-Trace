@@ -1,5 +1,7 @@
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -37,6 +39,7 @@ Future<bool> logInWithGoogle() async {
 }
 
 Future<bool> register(
+  BuildContext context,
   String email,
   String pass,
   Function(String error) onRegisterFailed,
@@ -53,22 +56,23 @@ Future<bool> register(
 
     final successful = user != null;
 
-    if (!successful) errorCodeToCallback('', onRegisterFailed);
+    if (!successful) errorCodeToCallback(context, '', onRegisterFailed);
 
     return successful;
   } on PlatformException catch (e, s) {
     print([e, s]);
 
-    errorCodeToCallback(e.code, onRegisterFailed);
+    errorCodeToCallback(context, e.code, onRegisterFailed);
   } catch (e, s) {
     print([e, s]);
-    errorCodeToCallback('', onRegisterFailed);
+    errorCodeToCallback(context, '', onRegisterFailed);
   }
 
   return false;
 }
 
 Future<bool> logIn(
+  BuildContext context,
   String email,
   String pass,
   Function(String error) onLoginFailed,
@@ -81,77 +85,87 @@ Future<bool> logIn(
 
     bool successful = result != null;
 
-    if (!successful) errorCodeToCallback('', onLoginFailed);
+    if (!successful) errorCodeToCallback(context, '', onLoginFailed);
 
     return successful;
   } on PlatformException catch (e, s) {
     print([e, s]);
 
-    errorCodeToCallback(e.code, onLoginFailed);
+    errorCodeToCallback(context, e.code, onLoginFailed);
   } catch (e, s) {
     print([e, s]);
 
-    errorCodeToCallback('', onLoginFailed);
+    errorCodeToCallback(context, '', onLoginFailed);
   }
   return false;
 }
 
-bool forgotPassword(String email, onResetFailed(String error)) {
+bool forgotPassword(
+    BuildContext context, String email, onResetFailed(String error)) {
   try {
     auth.sendPasswordResetEmail(email: email);
     return true;
   } on PlatformException catch (e, s) {
     print([e, s]);
-    errorCodeToCallback(e.code, onResetFailed);
+    errorCodeToCallback(context, e.code, onResetFailed);
   } catch (e) {
-    errorCodeToCallback('', onResetFailed);
+    errorCodeToCallback(context, '', onResetFailed);
   }
   return false;
 }
 
-String validateEmail(String email) {
-  if (isEmpty(email)) return "Nincs email megadva";
+String validateEmail(BuildContext context, String email) {
+  final AppLocalizations localizations = AppLocalizations.of(context);
+  if (isEmpty(email)) return localizations.noEmail;
 
   if (emailRegex.hasMatch(email)) return null;
 
-  return "A megadott email cím hibás.";
+  return localizations.wrongEmail;
 }
 
-String validatePasswords(String pass1, String pass2) {
-  if (isEmpty(pass2)) return "Nincs jelszó megadva";
+String validatePasswords(BuildContext context, String pass1, String pass2) {
+  final AppLocalizations localizations = AppLocalizations.of(context);
+
+  if (isEmpty(pass2)) return localizations.noPassword;
 
   if (pass1 == pass2) return null;
 
-  return 'A két jelszó nem egyezik.';
+  return localizations.notMatchingPasswords;
 }
 
-String validatePasswordStrength(String password, bool onlyIsNotEmpty) {
-  if (isEmpty(password)) return "Nincs jelszó megadva";
+String validatePasswordStrength(
+    BuildContext context, String password, bool onlyIsNotEmpty) {
+  final AppLocalizations localizations = AppLocalizations.of(context);
+
+  if (isEmpty(password)) return localizations.noPassword;
 
   if (onlyIsNotEmpty) return null;
   if (passwordRegex.hasMatch(password.trim())) return null;
 
-  return "A Jelszónak minimum 8 karakter hosszúnak kell lennie és tartalmaznia kell számokat és betűket";
+  return localizations.wrongPassword;
 }
 
-errorCodeToCallback(String errorCode, Function(String error) callback) =>
-    callback(errorCodeToString(errorCode));
+errorCodeToCallback(BuildContext context, String errorCode,
+        Function(String error) callback) =>
+    callback(errorCodeToString(context, errorCode));
 
-errorCodeToString(String errorCode) {
+errorCodeToString(BuildContext context, String errorCode) {
+  final AppLocalizations localizations = AppLocalizations.of(context);
+
   switch (errorCode) {
     case 'ERROR_WEAK_PASSWORD':
-      return 'A megadott jelszó gyenge';
+      return localizations.weakPassword;
     case 'ERROR_EMAIL_ALREADY_IN_USE':
-      return 'Az email már használatban van';
+      return localizations.emailAlreadyInUse;
     case 'ERROR_INVALID_EMAIL':
-      return 'Az email helytelen';
+      return localizations.invalidEmail;
     case 'ERROR_WRONG_PASSWORD':
-      return 'A jelszó helytelen';
+      return localizations.wrongPasswordError;
     case 'ERROR_USER_NOT_FOUND':
-      return 'A felhsználó nem létezik';
+      return localizations.userNotFound;
     case 'ERROR_USER_DISABLED':
-      return 'A felhasználó le van tiltva';
+      return localizations.userDisabled;
     case 'ERROR_TOO_MANY_REQUESTS':
-      return 'Túl sokszor próbált belépni ezzel a felhasználóval.';
+      return localizations.tooManyRequests;
   }
 }

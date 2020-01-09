@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImagePreview extends StatelessWidget {
@@ -25,8 +24,8 @@ class ImagePreview extends StatelessWidget {
                     tag: tag ?? imageUrl,
                     child: SizedBox(
                       child: ClipRRect(
-                        child: CachedNetworkImage(
-                          imageUrl: imageUrl,
+                        child: Image.network(
+                          imageUrl,
                           fit: BoxFit.contain,
                         ),
                       ),

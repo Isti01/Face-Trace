@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/data_classes/gender.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/login/register_form/pages/interests_page.dart';
 import 'package:flutter/material.dart';
@@ -28,15 +29,17 @@ class _GenderPageState extends State<GenderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return FormPage(
-      title: "Milyen nemű vagy?",
+      title: localizations.genderQuestion,
       child: Wrap(
         alignment: WrapAlignment.spaceEvenly,
         runAlignment: WrapAlignment.spaceEvenly,
         children: [
           for (final gender in Gender.values)
             ChoiceWidget(
-              text: gender.text,
+              text: gender.text(context),
               selected: this.gender == gender,
               onSelected: (_) {
                 setState(() => this.gender = gender);

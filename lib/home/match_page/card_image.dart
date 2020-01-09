@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/match_page/card_description.dart';
@@ -25,10 +24,9 @@ class CardImage extends StatelessWidget {
             child: SizedBox(
               height: imageSize,
               width: imageSize,
-              child: CachedNetworkImage(
-                imageUrl: user.profileImage,
-                placeholder: (c, _) =>
-                    LoadingCard.loadingEmoji(user.gender.emoji),
+              child: Image.network(
+                user.profileImage,
+                loadingBuilder: _imageBuilder,
                 fit: BoxFit.cover,
               ),
             ),
@@ -39,4 +37,7 @@ class CardImage extends StatelessWidget {
       ],
     );
   }
+
+  Widget _imageBuilder(context, Widget child, ImageChunkEvent e) =>
+      e == null ? child : LoadingCard.loadingEmoji(user.gender.emoji);
 }

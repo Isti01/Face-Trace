@@ -2,6 +2,7 @@ import 'package:face_app/bloc/chat_room_bloc/chat_room_bloc.dart';
 import 'package:face_app/bloc/chat_room_bloc/chat_room_states.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/chat_page/chat_room/message_list.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,7 +51,7 @@ class ChatRoomBody extends StatelessWidget {
 
   Widget _noMessages(context) => Center(
         child: Text(
-          'Küldd el az első üzenetet!',
+          AppLocalizations.of(context).sendTheFirstMessage,
           style: Theme.of(context).textTheme.title.apply(color: Colors.white),
         ),
       );

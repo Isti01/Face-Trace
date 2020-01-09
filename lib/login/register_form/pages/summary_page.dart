@@ -2,6 +2,7 @@ import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/interest.dart';
 import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final dateFormat = DateFormat("yyyy. MM. dd.");
+DateFormat dateFormat(AppLocalizations loc) => DateFormat(loc.dateFormat);
 
 final faceDetector = FirebaseVision.instance.faceDetector(
   FaceDetectorOptions(mode: FaceDetectorMode.accurate),
@@ -37,23 +38,24 @@ class SummaryPage extends StatefulWidget {
 class _SummaryPageState extends State<SummaryPage> {
   bool loading = false;
 
-  String get _name => widget.state.name != null && widget.state.name.isNotEmpty
-      ? "${widget.state.name} a nevem. 👋\n\n"
+  String _name(AppLocalizations loc) =>
+      widget.state.name != null && widget.state.name.isNotEmpty
+          ? "${widget.state.name} ${loc.mName}👋\n\n"
+          : "";
+
+  String _birthDate(AppLocalizations loc) => widget.state.birthDate != null
+      ? "${dateFormat(loc).format(widget.state.birthDate)} ${loc.mDate}👶\n\n"
       : "";
 
-  String get _birthDate => widget.state.birthDate != null
-      ? "${dateFormat.format(widget.state.birthDate)} a születési dátumom.👶\n\n"
-      : "";
+  String _attractedTo(AppLocalizations loc) =>
+      writeList(widget.state.attractedTo, loc.mAttractedTo);
 
-  String get _attractedTo =>
-      writeList(widget.state.attractedTo, "Vonzódsz utána: ");
+  String _interests(AppLocalizations loc) =>
+      writeList(widget.state.interests.toList(), loc.mInterests);
 
-  String get _interests =>
-      writeList(widget.state.interests.toList(), "Érdekel: ");
-
-  String get _description =>
+  String _description(AppLocalizations loc) =>
       widget.state.description != null && widget.state.description.isNotEmpty
-          ? 'Néhány szó magamról: ${widget.state.description}'
+          ? '${loc.mDescription} ${widget.state.description}'
           : "";
 
   String writeList(List list, String title) {
@@ -63,8 +65,8 @@ class _SummaryPageState extends State<SummaryPage> {
       (val) {
         var text = '';
         if (val is Gender)
-          text = val.text;
-        else if (val is Interest) text = val.text;
+          text = val.text(context);
+        else if (val is Interest) text = val.text(context);
         buffer..write('  ')..write(text);
       },
     );
@@ -74,18 +76,24 @@ class _SummaryPageState extends State<SummaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final color = widget.state.color.color[800];
     final buttonTextStyle =
         Theme.of(context).textTheme.button.copyWith(color: color);
 
     final indicatorColor = AlwaysStoppedAnimation(color);
     return FormPage(
-      title: "Helyes így a bemutatkozásod?",
-      description: "Ezeken később változtathatsz",
+      title: localizations.summaryText,
+      description: localizations.summaryHint,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Text(
-          "$_name$_attractedTo$_birthDate$_interests$_description",
+          "${_name(localizations)}"
+          "${_attractedTo(localizations)}"
+          "${_birthDate(localizations)}"
+          "${_interests(localizations)}"
+          "${_description(localizations)}",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.subhead,
         ),
@@ -112,7 +120,7 @@ class _SummaryPageState extends State<SummaryPage> {
                   ),
                 ),
               Text(
-                "Kész a bemutatkozás!",
+                localizations.summeryFinish,
                 style: buttonTextStyle,
               ),
             ],
@@ -123,15 +131,12 @@ class _SummaryPageState extends State<SummaryPage> {
     );
   }
 
-  onPressed() async {
+  onPressed(AppLocalizations localizations) async {
     print(widget.state);
     this.setState(() => loading = true);
     try {
       if (!widget.state.validate()) {
-        showToast(
-          context,
-          title: "A regisztrációhoz tölts ki helyesen minden mezőt!",
-        );
+        showToast(context, title: localizations.invalidForm);
         this.setState(() => loading = false);
         return;
       }
@@ -143,8 +148,8 @@ class _SummaryPageState extends State<SummaryPage> {
       if (faces.isEmpty) {
         showToast(
           context,
-          title: "A megadott képen nem található arc!",
-          message: "Adj meg egy olyan képet, amin rajta vagy!",
+          title: localizations.noFace,
+          message: localizations.imageHint,
         );
         this.setState(() => loading = false);
         return;

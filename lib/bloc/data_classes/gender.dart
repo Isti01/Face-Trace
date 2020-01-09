@@ -1,3 +1,6 @@
+import 'package:face_app/localizations/localizations.dart';
+import 'package:flutter/cupertino.dart';
+
 enum Gender {
   female,
   male,
@@ -5,14 +8,16 @@ enum Gender {
 }
 
 extension GenderExtension on Gender {
-  String get text {
+  String text(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context);
+
     switch (this) {
       case Gender.female:
-        return "Nő $emoji";
+        return "${localizations.femaleGender} $emoji";
       case Gender.male:
-        return "Férfi $emoji";
+        return "${localizations.femaleGender} $emoji";
       default:
-        return "Egyéb $emoji";
+        return "${localizations.femaleGender} $emoji";
     }
   }
 

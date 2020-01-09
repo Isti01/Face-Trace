@@ -3,6 +3,7 @@ import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/home/user_page/color_picker.dart';
 import 'package:face_app/home/user_page/user_page_parts.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/gallery.dart';
@@ -17,6 +18,7 @@ class UserPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final user = CurrentUser.of(context).user;
     final textTheme = Theme.of(context).textTheme;
     final size = MediaQuery.of(context).size;
@@ -52,18 +54,24 @@ class UserPage extends StatelessWidget {
                             size.shortestSide * 0.45 - (topPadding - avatarTop),
                       ),
                       name(user, context, textTheme),
-                      PageDivider(style: textTheme.title, text: 'Galéria'),
+                      PageDivider(
+                        style: textTheme.title,
+                        text: localizations.gallery,
+                      ),
                       Gallery(
                         images: user.images,
                         startOffset: 44,
                         canAddNew: true,
                         addToGallery: getBloc(context).addToGallery,
                       ),
-                      PageDivider(style: textTheme.title, text: 'Leírás'),
+                      PageDivider(
+                        style: textTheme.title,
+                        text: localizations.description,
+                      ),
                       description(user, context, textTheme),
                       PageDivider(
                         style: textTheme.title,
-                        text: 'Érdeklődési kör',
+                        text: localizations.interests,
                       ),
                       interests(context, user),
                       PageDivider(),
@@ -74,7 +82,7 @@ class UserPage extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
                       OutlineButton(
-                        child: Text("Kijelentkezés 👋"),
+                        child: Text(localizations.logOut + " 👋"),
                         onPressed: () => auth.signOut(),
                         shape: AppBorder,
                       ),

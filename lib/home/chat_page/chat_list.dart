@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/chat_bloc/chat_bloc.dart';
 import 'package:face_app/bloc/chat_bloc/chat_bloc_states.dart';
 import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/chat_page/chat_room/chat_room.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,13 +15,14 @@ class ChatList extends StatelessWidget {
   Widget build(BuildContext context) {
     final chats = state.filteredChats;
     final textTheme = Theme.of(context).textTheme;
+    final localizations = AppLocalizations.of(context);
     if (chats?.isEmpty ?? true)
       return SliverToBoxAdapter(
         child: Material(
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text("Nincs chat partner", style: textTheme.title),
+              child: Text(localizations.noChatPartner, style: textTheme.title),
             ),
           ),
         ),
@@ -39,9 +40,7 @@ class ChatList extends StatelessWidget {
               leading: Hero(
                 tag: user.uid + "chatAvatar",
                 child: CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(
-                    user.profileImage,
-                  ),
+                  backgroundImage: NetworkImage(user.profileImage),
                 ),
               ),
               title: Hero(

@@ -1,3 +1,6 @@
+import 'package:face_app/localizations/localizations.dart';
+import 'package:flutter/cupertino.dart';
+
 enum Interest {
   sports,
   music,
@@ -12,28 +15,30 @@ enum Interest {
 }
 
 extension InterestExtension on Interest {
-  String get text {
+  String text(BuildContext context) {
+    final AppLocalizations localizations = AppLocalizations.of(context);
+
     switch (this) {
       case Interest.sports:
-        return "⚽ Sport";
+        return "⚽ ${localizations.sportsInterest}";
       case Interest.music:
-        return "🎵 Zene";
+        return "🎵 ${localizations.musicInterest}";
       case Interest.reading:
-        return "📚 Olvasás";
+        return "📚 ${localizations.readingInterest}";
       case Interest.writing:
-        return "📝 Írás";
+        return "📝 ${localizations.writingInterest}";
       case Interest.arts:
-        return "🎨 Művészetek";
+        return "🎨 ${localizations.artsInterest}";
       case Interest.dancing:
-        return "💃 Tánc";
+        return "💃 ${localizations.dancingInterest}";
       case Interest.gardening:
-        return "🌱 Kertészkedés";
+        return "🌱 ${localizations.gardeningInterest}";
       case Interest.baking:
-        return "🍰 Konyha";
+        return "🍰 ${localizations.bakingInterest}";
       case Interest.movies:
-        return "🎥 Filmek";
+        return "🎥 ${localizations.moviesInterest}";
       case Interest.travelling:
-        return "✈️ Utazás";
+        return "✈️ ${localizations.travellingInterest}";
       default:
         return "Not implemented";
     }

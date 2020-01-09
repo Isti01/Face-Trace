@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/interest.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 
 class Interests extends StatefulWidget {
@@ -36,10 +37,11 @@ class _InterestsState extends State<Interests> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final List<Widget> children = editing
         ? Interest.values
             .map((interest) => FaceAppChip(
-                  interest: interest.text,
+                  interest: interest.text(context),
                   selectable: true,
                   selected: interests.contains(interest),
                   appColor: widget.color,
@@ -49,8 +51,10 @@ class _InterestsState extends State<Interests> {
                 ))
             .toList()
         : interests
-            .map((interest) =>
-                FaceAppChip(interest: interest.text, appColor: widget.color))
+            .map((interest) => FaceAppChip(
+                  interest: interest.text(context),
+                  appColor: widget.color,
+                ))
             .toList();
 
     return Row(
@@ -67,7 +71,7 @@ class _InterestsState extends State<Interests> {
         ),
         IconButton(
           icon: Text(editing ? '👍' : '✏', style: TextStyle(fontSize: 16)),
-          tooltip: editing ? 'Mentés' : 'Szerkesztés',
+          tooltip: editing ? localizations.save : localizations.edit,
           onPressed: editing
               ? () {
                   setState(() => editing = false);

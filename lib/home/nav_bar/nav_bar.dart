@@ -1,6 +1,7 @@
 import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/nav_bar/nav_bar_item_widget.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 
@@ -16,11 +17,14 @@ class NavBar extends StatelessWidget {
 
   User getUser(context) => CurrentUser.of(context).user;
 
-  Map<int, TabBase> tabData(context) => {
-        0: TabBase('💖', "Felfedezés"),
-        1: TabBase('💬', "Chat"),
-        2: TabBase(getUser(context).gender.emoji, "Profil"),
-      };
+  Map<int, TabBase> tabData(context) {
+    final localizations = AppLocalizations.of(context);
+    return {
+      0: TabBase('💖', localizations.discover),
+      1: TabBase('💬', localizations.chat),
+      2: TabBase(getUser(context).gender.emoji, localizations.profile),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {

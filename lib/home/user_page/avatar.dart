@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/firebase/upload_image.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/image_preview.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +42,7 @@ class Avatar extends StatelessWidget {
                 width: imageSize,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(999),
-                  child: CachedNetworkImage(
-                    imageUrl: profileImage,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.network(profileImage, fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -75,6 +72,7 @@ class ImageAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     final offset = (1 + math.sqrt1_2) * imageSize / 2 - 28;
     return Positioned(
       left: offset,
@@ -98,11 +96,11 @@ class ImageAction extends StatelessWidget {
         itemBuilder: (_) => [
           PopupMenuItem<int>(
             value: 0,
-            child: Text('📷  Új kép készítése'),
+            child: Text(localizations.makeNewPhoto),
           ),
           PopupMenuItem<int>(
             value: 1,
-            child: Text('🖼️  Meglévő kép kiválasztása'),
+            child: Text(localizations.pickFromGallery),
           ),
         ],
       ),

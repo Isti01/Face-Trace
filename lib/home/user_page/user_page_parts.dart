@@ -5,6 +5,7 @@ import 'package:face_app/home/user_page/avatar.dart';
 import 'package:face_app/home/user_page/editable_field.dart';
 import 'package:face_app/home/user_page/interests.dart';
 import 'package:face_app/home/user_page/user_page.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 
 Widget avatar(BuildContext context, User user, double avatarTop) => Positioned(
@@ -28,7 +29,7 @@ Widget interests(BuildContext context, User user) => Interests(
 Widget name(User user, context, TextTheme textTheme) => EditableField(
       cursorColor: user.appColor.color,
       text: user.name,
-      replacementText: "Név",
+      replacementText: AppLocalizations.of(context).name,
       style: textTheme.display1,
       onTextChanged: (name) {
         if ((name?.isEmpty ?? false) || name == user.name) return false;
@@ -41,7 +42,7 @@ Widget description(User user, context, TextTheme textTheme) => SizedBox(
       child: EditableField(
         cursorColor: user.appColor.color,
         text: user.description,
-        replacementText: "Leírás rólam",
+        replacementText: AppLocalizations.of(context).aboutMe,
         style: textTheme.subhead,
         textAlign: TextAlign.start,
         onTextChanged: (desc) {

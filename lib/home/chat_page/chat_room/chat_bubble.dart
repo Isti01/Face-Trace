@@ -77,7 +77,6 @@ class ChatBubble extends StatelessWidget {
               ),
             )
           : Image.network(
-              // todo make it tappable
               message.message,
               fit: BoxFit.contain,
               loadingBuilder: (_, child, e) => AnimatedCrossFade(

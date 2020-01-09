@@ -1,6 +1,7 @@
 import 'package:face_app/bloc/chat_bloc/chat_bloc.dart';
 import 'package:face_app/bloc/chat_bloc/chat_bloc_states.dart';
 import 'package:face_app/home/chat_page/chat_list.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
@@ -33,14 +34,14 @@ class _SearchBoxState extends State<SearchBox> {
       builder: (context, state) {
         return SliverStickyHeader(
           overlapsContent: false,
-          header: _textField,
+          header: _textField(context),
           sliver: state.loadingChats ? _loading : ChatList(state: state),
         );
       },
     );
   }
 
-  Widget get _textField => SafeArea(
+  Widget _textField(context) => SafeArea(
         child: Material(
           borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
           child: Padding(
@@ -57,7 +58,7 @@ class _SearchBoxState extends State<SearchBox> {
                     highlightColor: Colors.transparent,
                   ),
                   filled: true,
-                  hintText: 'Keresés',
+                  hintText: AppLocalizations.of(context).search,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(12),

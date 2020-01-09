@@ -2,6 +2,7 @@ import 'package:face_app/bloc/match_bloc/match_bloc.dart';
 import 'package:face_app/bloc/match_bloc/match_bloc_states.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/home/match_page/match_card.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,6 +25,7 @@ class MatchPage extends StatelessWidget {
   }
 
   Widget _body(context, List<String> uids, MatchState state) {
+    final localizations = AppLocalizations.of(context);
     final size = MediaQuery.of(context).size;
     final length = uids.length;
 
@@ -36,7 +38,7 @@ class MatchPage extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  'Felfedezés',
+                  localizations.discover,
                   style: Theme.of(context)
                       .textTheme
                       .display1
@@ -53,7 +55,7 @@ class MatchPage extends StatelessWidget {
           ),
         ),
         if (uids?.isEmpty ?? true)
-          _ranOut(context)
+          _ranOut(context, localizations)
         else
           Stack(
             children: [
@@ -74,10 +76,10 @@ class MatchPage extends StatelessWidget {
         onSwiped: (right, uid) => bloc(context).onSwiped(right, uid),
       );
 
-  Widget _ranOut(context) => Expanded(
+  Widget _ranOut(context, AppLocalizations localizations) => Expanded(
         child: Center(
           child: Text(
-            "Nincs több kártya 🙁",
+            localizations.noMoreCards,
             style:
                 Theme.of(context).textTheme.display1.apply(color: Colors.white),
             textAlign: TextAlign.center,

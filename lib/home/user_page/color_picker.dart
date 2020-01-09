@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/color_circle.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/gradient_raised_button.dart';
@@ -16,6 +17,7 @@ class ColorPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return FittedBox(
       child: GradientRaisedButton(
         gradient: LinearGradient(
@@ -26,7 +28,7 @@ class ColorPicker extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Text(
-            "Alkalmazás színének változtatása",
+            localizations.changeAppColor,
             style: Theme.of(context).textTheme.button.apply(
                   color: Colors.white,
                 ),
@@ -48,6 +50,8 @@ class ColorPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Dialog(
       shape: AppBorder,
       child: Padding(
@@ -56,7 +60,8 @@ class ColorPickerDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 8),
-            Text('Válassz színt!', style: Theme.of(context).textTheme.title),
+            Text(localizations.chooseColor,
+                style: Theme.of(context).textTheme.title),
             Padding(
               padding: const EdgeInsets.only(top: 24),
               child: Wrap(
@@ -77,7 +82,7 @@ class ColorPickerDialog extends StatelessWidget {
               children: [
                 FlatButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Mégsem'),
+                  child: Text(localizations.cancel),
                 )
               ],
             )

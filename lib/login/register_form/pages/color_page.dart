@@ -1,4 +1,5 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:face_app/util/color_circle.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,11 @@ class ColorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return FormPage(
       removeChildPadding: true,
-      title: "Válassz egy színt, ami tetszik!",
+      title: localizations.colorQuestion,
       child: ColorChooser(
         initialColor: initialColor,
         onColorChanged: onColorChanged,
