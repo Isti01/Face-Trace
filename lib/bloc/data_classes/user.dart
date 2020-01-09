@@ -12,11 +12,13 @@ class User {
   final Gender gender;
   final List<Gender> attractedTo;
   final List<Interest> interests;
+  final List<String> images;
   final String name;
   final String profileImage;
   final FirebaseUser user;
   final bool fetchedData;
   final bool initial;
+  final String uid;
 
   User({
     this.appColor,
@@ -31,6 +33,8 @@ class User {
     this.fetchedData = false,
     this.initial = false,
     this.attractedTo,
+    this.uid,
+    this.images,
   });
 
   @override
@@ -49,7 +53,9 @@ class User {
           profileImage == other.profileImage &&
           user == other.user &&
           fetchedData == other.fetchedData &&
-          initial == other.initial;
+          initial == other.initial &&
+          uid == other.uid &&
+          images == other.images;
 
   @override
   int get hashCode =>
@@ -64,11 +70,32 @@ class User {
       profileImage.hashCode ^
       user.hashCode ^
       fetchedData.hashCode ^
-      initial.hashCode;
+      initial.hashCode ^
+      uid.hashCode ^
+      images.hashCode;
 
-  factory User.fromMap(Map<String, dynamic> map, [FirebaseUser user]) {
+  factory User.fromMap(
+    Map<String, dynamic> map, [
+    String docId,
+    FirebaseUser user,
+  ]) {
     if (map == null) return User(user: user, fetchedData: true);
+
+    List<String> images;
+    final rawImages = map['images'];
+    try {
+      if (rawImages != null && rawImages is Iterable) {
+        images = List<String>.from(rawImages);
+      } else {
+        images = [];
+      }
+    } catch (e, s) {
+      images = [];
+      print([e, s]);
+    }
+
     return User(
+      uid: docId,
       appColor: AppColorExtension.parse(map['appColor']),
       birthDate: parseTimestamp(map['birthDate']),
       createdAt: parseTimestamp(map['createdAt']),
@@ -80,6 +107,7 @@ class User {
       profileImage: map['profileImage'],
       user: user,
       fetchedData: true,
+      images: images,
     );
   }
 
@@ -92,25 +120,14 @@ class User {
       interests != null ||
       name != null ||
       profileImage != null ||
-      attractedTo != null;
+      attractedTo != null ||
+      images != null;
 
   static DateTime parseTimestamp(source) =>
       source is Timestamp ? source.toDate() : null;
 
-  User addFirebaseUser(FirebaseUser newUser) => User(
-      appColor: appColor,
-      birthDate: birthDate,
-      createdAt: createdAt,
-      description: description,
-      gender: gender,
-      interests: interests,
-      name: name,
-      profileImage: profileImage,
-      fetchedData: fetchedData,
-      user: newUser);
-
   @override
   String toString() {
-    return 'User{appColor: $appColor, birthDate: $birthDate, createdAt: $createdAt, description: $description, gender: $gender, attractedTo: $attractedTo, interests: $interests, name: $name, profileImage: $profileImage, user: $user, fetchedData: $fetchedData, initial: $initial}';
+    return 'User{appColor: $appColor, birthDate: $birthDate, createdAt: $createdAt, description: $description, gender: $gender, attractedTo: $attractedTo, interests: $interests, images: $images, name: $name, profileImage: $profileImage, user: $user, fetchedData: $fetchedData, initial: $initial, uid: $uid}';
   }
 }

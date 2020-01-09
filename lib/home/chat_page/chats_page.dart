@@ -10,23 +10,22 @@ class ChatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+
     return Theme(
-      data: Theme.of(context).copyWith(canvasColor: Colors.white),
+      data: theme.copyWith(canvasColor: Colors.white),
       child: Padding(
         padding: PagePadding,
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: SizedBox(
-                height: size.height / 4.5,
+                height: size.height / 5,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Chat',
-                    style: Theme.of(context)
-                        .textTheme
-                        .display1
-                        .apply(color: Colors.white),
+                    style: theme.textTheme.display1.apply(color: Colors.white),
                   ),
                 ),
               ),

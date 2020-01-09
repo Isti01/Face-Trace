@@ -1,16 +1,15 @@
-import 'package:face_app/bloc/data_classes/app_color.dart';
-import 'package:face_app/bloc/data_classes/gender.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
+import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
-import 'package:face_app/home/match_page/card_description.dart';
+import 'package:face_app/home/match_page/card_button.dart';
+import 'package:face_app/home/match_page/card_image.dart';
 import 'package:face_app/home/match_page/loading_card.dart';
 import 'package:face_app/home/match_page/user_page/user_page.dart';
 import 'package:face_app/util/animated_transform.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
-import 'package:face_app/util/gradient_raised_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image/network.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DraggableCard extends StatefulWidget {
   final String uid;
@@ -74,16 +73,15 @@ class DraggableCardState extends State<DraggableCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.user == null)
-      return LoadingCard(currentUser: CurrentUser.of(context).user);
+    final currentUser = CurrentUser.of(context).user;
+    if (widget.user == null) return LoadingCard(currentUser: currentUser);
 
     final size = MediaQuery.of(context).size;
-    final transform = -offset / 2500;
 
     return AnimatedTransform(
-      transform: Matrix4.skewX(transform)
+      transform: Matrix4.identity()
         ..translate(-offset)
-        ..rotateZ(transform),
+        ..rotateZ(offset / 2500),
       origin: Alignment.topCenter,
       child: Padding(
         child: Material(
@@ -93,25 +91,37 @@ class DraggableCardState extends State<DraggableCard> {
             borderRadius: AppBorderRadius,
             child: Stack(
               children: [
-                AbsorbPointer(
-                  absorbing: widget.user == null,
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (c) => UserPage()),
-                    ),
-                    onHorizontalDragStart: _onStart,
-                    onHorizontalDragUpdate: _onUpdate,
-                    onHorizontalDragEnd: _onEnd,
-                    child: buildImage(size),
+                GestureDetector(
+                  onTap: () {
+                    final bloc = BlocProvider.of<UserBloc>(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        maintainState: true,
+                        builder: (c) => CurrentUser.passOverUser(
+                          bloc: bloc,
+                          child: UserPage(
+                            user: widget.user,
+                            swipe: widget.onSwiped,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  onHorizontalDragStart: _onStart,
+                  onHorizontalDragUpdate: _onUpdate,
+                  onHorizontalDragEnd: _onEnd,
+                  child: CardImage(user: widget.user),
+                ),
+                Positioned(
+                  right: 0,
+                  left: 0,
+                  top: size.shortestSide * 0.8 - 44,
+                  child: CardButtons(
+                    uid: widget.user.uid,
+                    swipe: swipe,
+                    color: currentUser.appColor,
                   ),
                 ),
-                if (widget.user != null)
-                  Positioned(
-                    right: 0,
-                    left: 0,
-                    top: size.shortestSide * 0.9 - 44,
-                    child: _buttons,
-                  ),
               ],
             ),
           ),
@@ -119,51 +129,6 @@ class DraggableCardState extends State<DraggableCard> {
         padding: PagePadding,
       ),
       duration: _duration,
-    );
-  }
-
-  Column buildImage(Size size) {
-    // todo create separate widget for this
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(
-          height: size.shortestSide * 0.9,
-          width: size.shortestSide * 0.9,
-          child: widget.user == null
-              ? LoadingCard.loadingEmoji(widget.user.gender.emoji)
-              : Image(
-                  loadingBuilder: (context, child, e) => e == null
-                      ? child
-                      : LoadingCard.loadingEmoji(widget.user.gender.emoji),
-                  fit: BoxFit.cover,
-                  image: NetworkImageWithRetry(widget.user.profileImage),
-                ),
-        ),
-        SizedBox(height: 20),
-        CardDescription(user: widget.user),
-      ],
-    );
-  }
-
-  Widget get _buttons {
-    final AppColor color = CurrentUser.of(context).user.appColor;
-    return ButtonBar(
-      mainAxisSize: MainAxisSize.max,
-      alignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        GradientRaisedButton.circle(
-          child: Text('💩', style: TextStyle(fontSize: 24)),
-          gradient: LinearGradient(colors: color.next.colors),
-          onTap: () => swipe(false),
-        ),
-        GradientRaisedButton.circle(
-          child: Text('😍', style: TextStyle(fontSize: 24)),
-          gradient: LinearGradient(colors: color.colors),
-          onTap: () => swipe(true),
-        ),
-      ],
     );
   }
 }

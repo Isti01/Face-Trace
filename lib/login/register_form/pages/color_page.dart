@@ -1,7 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/login/register_form/pages/form_page.dart';
+import 'package:face_app/util/color_circle.dart';
 import 'package:flutter/material.dart';
 
 class ColorPage extends StatelessWidget {
@@ -74,6 +73,7 @@ class _ColorChooserState extends State<ColorChooser> {
         controller: controller,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) => ColorCircle(
+          color: AppColor.values[index],
           index: index,
           circleAnimation: circleAnimation,
           page: page,
@@ -88,51 +88,5 @@ class _ColorChooserState extends State<ColorChooser> {
   void dispose() {
     controller.dispose();
     super.dispose();
-  }
-}
-
-class ColorCircle extends StatelessWidget {
-  final int index;
-  final double page;
-  final circleAnimation;
-  final scaleAnimation;
-  final Function(AppColor color, Offset offset) onSelected;
-
-  const ColorCircle({
-    Key key,
-    this.index,
-    this.page,
-    this.circleAnimation,
-    this.scaleAnimation,
-    this.onSelected,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final color = AppColor.values[index];
-    final circleSize = MediaQuery.of(context).size.shortestSide * 0.2;
-
-    final dif = index - page;
-    final value = math.min(1.0, math.max(0.0, dif.abs()));
-    final offset = circleAnimation.transform(value) * (dif < 0 ? 1 : -1);
-    return GestureDetector(
-      onTapDown: (det) => onSelected(color, det.globalPosition),
-      child: Align(
-        alignment: Alignment(0, offset),
-        child: Container(
-          height: circleSize * scaleAnimation.transform(value),
-          width: circleSize * scaleAnimation.transform(value),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white70, width: 3),
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: color.colors,
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

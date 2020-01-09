@@ -77,11 +77,11 @@ class _LoadingCardState extends State<LoadingCard>
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                height: size.shortestSide * 0.9,
+                height: size.shortestSide * 0.8,
                 child: Material(child: LoadingCard.loadingEmoji(_genderEmoji)),
               ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12).add(EdgeInsets.only(top: 27)),
                 child: SizedBox(
                   width: double.infinity,
                   child: Column(

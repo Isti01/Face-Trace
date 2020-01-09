@@ -33,7 +33,6 @@ class ChatState {
         chats: [],
       );
 
-
   @override
   String toString() {
     return 'ChatState{loadingChats: $loadingChats, chats: $chats, filter: $filter, filteredChats: $filteredChats}';

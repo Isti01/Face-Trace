@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/chat_room_bloc/chat_room_bloc.dart';
-import 'package:face_app/bloc/chat_room_bloc/chat_room_states.dart';
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
-import 'package:face_app/home/chat_page/chat_room/message_list.dart';
+import 'package:face_app/home/chat_page/chat_room/chat_app_bar.dart';
+import 'package:face_app/home/chat_page/chat_room/chat_room_body.dart';
 import 'package:face_app/home/chat_page/chat_room/text_input_bar.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
-import 'package:face_app/util/transparent_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,19 +30,10 @@ class _ChatRoomState extends State<ChatRoom> {
     super.initState();
   }
 
-  _checkIfHasEnoughMessage() =>
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_controller.position.viewportDimension <
-            _controller.position.maxScrollExtent) return;
-
-        widget.bloc.nextMessages();
-      });
-
   @override
   Widget build(BuildContext context) {
     final user = CurrentUser.of(context).user;
     final color = user.appColor;
-    final textTheme = Theme.of(context).textTheme;
 
     return AnimatedTheme(
       data: ThemeData(primarySwatch: color.color),
@@ -56,24 +45,10 @@ class _ChatRoomState extends State<ChatRoom> {
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
-                  child: BlocBuilder<ChatRoomBloc, ChatRoomState>(
-                    builder: (context, state) {
-                      if (!state.hasMessages) return progressIndicator;
-                      final messages = state.messages;
-
-                      if (messages?.isEmpty ?? true)
-                        return Text('nincs uzenet'); //todo add something better
-
-                      _checkIfHasEnoughMessage();
-
-                      return MessageList(
-                        //make it sliver
-                        partner: widget.partner,
-                        loading: state.loading,
-                        controller: _controller,
-                        messages: messages,
-                      );
-                    },
+                  child: ChatRoomBody(
+                    partner: widget.partner,
+                    bloc: widget.bloc,
+                    controller: _controller,
                   ),
                 ),
                 Positioned(
@@ -81,6 +56,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   right: 0,
                   left: 0,
                   child: TextInputBar(
+                    sendImage: widget.bloc.sendImage,
                     onSubmitted: widget.bloc.sendMessage,
                     scrollController: _controller,
                   ),
@@ -89,31 +65,7 @@ class _ChatRoomState extends State<ChatRoom> {
                   top: 0,
                   right: 0,
                   left: 0,
-                  child: TransparentAppBar(
-                    color: Colors.white10,
-                    title: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (widget.partner?.profileImage != null) ...[
-                          CircleAvatar(
-                            backgroundImage: CachedNetworkImageProvider(
-                              widget.partner.profileImage,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                        ],
-                        if (widget.partner?.name != null)
-                          Text(
-                            widget.partner.name,
-                            style: textTheme.title.apply(color: Colors.white),
-                          )
-                      ],
-                    ),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
+                  child: ChatAppBar(partner: widget.partner),
                 ),
               ],
             ),
@@ -122,8 +74,6 @@ class _ChatRoomState extends State<ChatRoom> {
       ),
     );
   }
-
-  static get progressIndicator => Center(child: CircularProgressIndicator());
 
   @override
   void dispose() {

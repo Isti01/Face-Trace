@@ -14,6 +14,28 @@ extension AppColorExtension on AppColor {
     return colors[(colors.indexOf(this) + 1) % colors.length];
   }
 
+  String get firestoreText {
+    switch (this) {
+      case AppColor.red:
+        return 'red';
+        break;
+      case AppColor.green:
+        return 'green';
+        break;
+      case AppColor.amber:
+        return 'amber';
+        break;
+      case AppColor.blue:
+        return 'blue';
+        break;
+      case AppColor.purple:
+        return 'purple';
+        break;
+      default:
+        return 'green';
+    }
+  }
+
   ColorSwatch get color {
     switch (this) {
       case AppColor.red:
@@ -42,7 +64,7 @@ extension AppColorExtension on AppColor {
       case AppColor.purple:
         return [Colors.purple[800], Colors.indigo[800]];
       case AppColor.amber:
-        return [Colors.amber[900], Colors.deepOrange[800]];
+        return [Colors.amber[900], Colors.deepOrange[900]];
       default:
         return [Colors.white, Colors.black];
     }

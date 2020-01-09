@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:face_app/bloc/chat_bloc/chat_bloc.dart';
 import 'package:face_app/bloc/chat_bloc/chat_bloc_states.dart';
+import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/chat_page/chat_room/chat_room.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image/network.dart';
 
 class ChatList extends StatelessWidget {
   final ChatState state;
@@ -35,19 +36,32 @@ class ChatList extends StatelessWidget {
           return Material(
             key: ValueKey(chat.chatId),
             child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImageWithRetry(user.profileImage),
+              leading: Hero(
+                tag: user.uid + "chatAvatar",
+                child: CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                    user.profileImage,
+                  ),
+                ),
               ),
-              title: Text(user.name),
+              title: Hero(
+                tag: user.uid + "chatName",
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Text(user.name),
+                ),
+              ),
               onTap: () async {
+                final userBloc = BlocProvider.of<UserBloc>(context);
+                final chatBloc =
+                    BlocProvider.of<ChatBloc>(context).chatRooms[chat.chatId];
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (c) => CurrentUser.passOverUser(
-                      context: context,
+                      bloc: userBloc,
                       child: ChatRoom(
                         partner: user,
-                        bloc: BlocProvider.of<ChatBloc>(context)
-                            .chatRooms[chat.chatId],
+                        bloc: chatBloc,
                       ),
                     ),
                   ),

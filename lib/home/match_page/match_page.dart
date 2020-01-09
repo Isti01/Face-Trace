@@ -19,8 +19,6 @@ class MatchPage extends StatelessWidget {
 
       final uids = state.uidList;
 
-      if (uids?.isEmpty ?? true) return _ranOut(context);
-
       return _body(context, uids.take(NumDisplayedUsers).toList(), state);
     });
   }
@@ -34,7 +32,7 @@ class MatchPage extends StatelessWidget {
         Padding(
           padding: PagePadding,
           child: SizedBox(
-            height: size.height / 4.5,
+            height: size.height / 5,
             child: Row(
               children: <Widget>[
                 Text(
@@ -54,12 +52,15 @@ class MatchPage extends StatelessWidget {
             ),
           ),
         ),
-        Stack(
-          children: [
-            for (int i = length - 1; i >= 0; i--)
-              _matchCard(context, i, uids[i], state)
-          ],
-        ),
+        if (uids?.isEmpty ?? true)
+          _ranOut(context)
+        else
+          Stack(
+            children: [
+              for (int i = length - 1; i >= 0; i--)
+                _matchCard(context, i, uids[i], state)
+            ],
+          ),
       ],
     );
   }
@@ -73,11 +74,14 @@ class MatchPage extends StatelessWidget {
         onSwiped: (right, uid) => bloc(context).onSwiped(right, uid),
       );
 
-  Widget _ranOut(context) => Center(
-        child: Text(
-          "Elfogyott",
-          style: Theme.of(context).textTheme.display1,
-          textAlign: TextAlign.center,
+  Widget _ranOut(context) => Expanded(
+        child: Center(
+          child: Text(
+            "Nincs több kártya 🙁",
+            style:
+                Theme.of(context).textTheme.display1.apply(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
         ),
       );
 }

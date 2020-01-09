@@ -25,7 +25,8 @@ class NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 2,
+      color: Colors.white,
+      elevation: 4,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: tabData(context)

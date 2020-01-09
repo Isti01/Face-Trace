@@ -1,15 +1,18 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TextInputBar extends StatefulWidget {
   final Function(String text) onSubmitted;
   final ScrollController scrollController;
+  final Function(ImageSource source) sendImage;
 
   const TextInputBar({
     Key key,
     this.onSubmitted,
     this.scrollController,
+    this.sendImage,
   }) : super(key: key);
 
   @override
@@ -55,12 +58,13 @@ class _TextInputBarState extends State<TextInputBar> {
               child: Row(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.image, color: Colors.white70),
-                      onPressed: () {
-                        //todo make image upload
-                        throw UnimplementedError(
-                            'implement image upload in chat');
-                      }),
+                    icon: Icon(Icons.image, color: Colors.white70),
+                    onPressed: () => widget.sendImage(ImageSource.gallery),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.camera_alt, color: Colors.white70),
+                    onPressed: () => widget.sendImage(ImageSource.camera),
+                  ),
                   SizedBox(width: 4),
                   _textField(textTheme),
                   IconButton(

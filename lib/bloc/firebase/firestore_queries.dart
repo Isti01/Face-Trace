@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:face_app/bloc/firebase/run_face_model.dart';
+import 'package:face_app/bloc/firebase/upload_image.dart';
 import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
-import 'package:face_app/util/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as path;
 
 final Firestore firestore = Firestore.instance;
 final CloudFunctions functions = CloudFunctions(region: 'europe-west1');
 final FirebaseStorage storage = FirebaseStorage.instance;
+
+FirebaseAuth auth = FirebaseAuth.instance;
 
 CollectionReference get users => firestore.collection('users');
 
@@ -24,16 +24,6 @@ CollectionReference get faces => firestore.collection('faces');
 
 DocumentReference getUserDocument(String uid) => users.document(uid);
 
-Future<String> uploadPhoto(FirebaseUser user, RegisterState state) async {
-  final imageFile = File(state.facePhoto);
-  final imageReference = storage.ref().child(
-        'images/${user.uid}/${path.basename(imageFile.path)}',
-      );
-  await imageReference.putFile(imageFile).onComplete;
-
-  return await imageReference.getDownloadURL() as String;
-}
-
 Future<void> saveUserData(FirebaseUser user, RegisterState state) async {
   final faceData = await runFaceModel(
     state.facePhoto,
@@ -43,7 +33,11 @@ Future<void> saveUserData(FirebaseUser user, RegisterState state) async {
     return [];
   });
 
-  final photoUrl = await uploadPhoto(user, state);
+  final photoUrl = await uploadPhoto(
+    user,
+    state.facePhoto,
+    'images/${user.uid}',
+  );
 
   final updateInfo = UserUpdateInfo()
     ..photoUrl = photoUrl
@@ -108,13 +102,15 @@ Future<DocumentReference> swipeUser({String uid, bool right}) async {
 Future<DocumentReference> sendMessage(
   String chatId,
   String message,
-  FirebaseUser user,
-) async {
+  FirebaseUser user, [
+  String type = 'text',
+]) async {
   if (message?.trim()?.isEmpty ?? true) return null;
   return chats.document(chatId).collection('messages').add({
     'message': message,
     'createdAt': DateTime.now(),
     'createdBy': user.uid,
+    'type': type
   });
 }
 

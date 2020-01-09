@@ -1,12 +1,23 @@
 import 'dart:math' as math;
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:face_app/bloc/firebase/upload_image.dart';
+import 'package:face_app/util/current_user.dart';
+import 'package:face_app/util/image_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image/network.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Avatar extends StatelessWidget {
   final profileImage;
   final Color color;
-  const Avatar({Key key, this.profileImage, this.color}) : super(key: key);
+  final Function(String path) onImageChanged;
+
+  const Avatar({
+    Key key,
+    this.profileImage,
+    this.color,
+    this.onImageChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,28 +29,49 @@ class Avatar extends StatelessWidget {
         Material(
           elevation: 4,
           shape: CircleBorder(),
-          child: Container(
-            height: imageSize,
-            width: imageSize,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImageWithRetry(profileImage),
-                fit: BoxFit.cover,
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => ImagePreview(imageUrl: profileImage),
               ),
-              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Hero(
+              tag: profileImage,
+              child: SizedBox(
+                height: imageSize,
+                width: imageSize,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: CachedNetworkImage(
+                    imageUrl: profileImage,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
-        ImageBanner(imageSize: imageSize, color: color)
+        ImageAction(
+          imageSize: imageSize,
+          color: color,
+          onImageChanged: onImageChanged,
+        )
       ],
     );
   }
 }
 
-class ImageBanner extends StatelessWidget {
+class ImageAction extends StatelessWidget {
   final double imageSize;
   final Color color;
-  const ImageBanner({Key key, this.imageSize, this.color}) : super(key: key);
+  final Function(String path) onImageChanged;
+
+  const ImageAction({
+    Key key,
+    this.imageSize,
+    this.color,
+    this.onImageChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,23 +79,44 @@ class ImageBanner extends StatelessWidget {
     return Positioned(
       left: offset,
       top: offset,
-      child: Material(
-        elevation: 2,
-        type: MaterialType.circle,
-        color: Colors.white,
-        child: InkWell(
-          highlightColor: Color.lerp(Colors.white, color, .2),
-          splashColor: Color.lerp(Colors.white, color, .3),
+      child: PopupMenuButton<int>(
+        offset: Offset(20, 20),
+        child: Material(
+          elevation: 2,
+          type: MaterialType.circle,
+          color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: Icon(Icons.camera_alt, color: color),
+            child: Text(
+              '📷',
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
           ),
-          onTap: () {
-            throw UnimplementedError();
-          },
-          borderRadius: BorderRadius.circular(999),
         ),
+        onSelected: (i) => uploadNewImage(i, context),
+        itemBuilder: (_) => [
+          PopupMenuItem<int>(
+            value: 0,
+            child: Text('📷  Új kép készítése'),
+          ),
+          PopupMenuItem<int>(
+            value: 1,
+            child: Text('🖼️  Meglévő kép kiválasztása'),
+          ),
+        ],
       ),
     );
+  }
+
+  void uploadNewImage(int i, context) async {
+    final source = i == 0 ? ImageSource.camera : ImageSource.gallery;
+    final image = await ImagePicker.pickImage(source: source);
+
+    if (image == null || !await image.exists()) return;
+    final user = CurrentUser.of(context).user.user;
+    final url = await uploadPhoto(user, image.path, 'images/${user.uid}');
+
+    onImageChanged(url);
   }
 }

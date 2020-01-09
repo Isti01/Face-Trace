@@ -15,9 +15,9 @@ class CurrentUser extends InheritedWidget {
   static CurrentUser of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<CurrentUser>();
 
-  static Widget passOverUser({BuildContext context, Widget child}) =>
+  static Widget passOverUser({UserBloc bloc, Widget child}) =>
       BlocBuilder<UserBloc, User>(
-        bloc: BlocProvider.of<UserBloc>(context),
+        bloc: bloc,
         builder: (context, user) => CurrentUser(
           user: user,
           child: child,

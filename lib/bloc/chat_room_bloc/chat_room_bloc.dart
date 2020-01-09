@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:face_app/bloc/chat_room_bloc/chat_room_states.dart';
 import 'package:face_app/bloc/data_classes/chat_message.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart' as db;
+import 'package:face_app/bloc/firebase/upload_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   final FirebaseUser user;
@@ -23,12 +25,21 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   ChatRoomState get initialState => ChatRoomState.init();
 
   _onNewMessage(QuerySnapshot snapshot) {
+    print(snapshot.documents);
     final last = snapshot.documents.isNotEmpty ? snapshot.documents.last : null;
 
     add(MessagesLoadedEvent(parseDocs(snapshot), last, true));
   }
 
   sendMessage(String message) => db.sendMessage(chatRoomId, message, user);
+
+  sendImage(ImageSource source) async {
+    final image = await ImagePicker.pickImage(source: source);
+    if (image == null || !await image.exists()) return;
+
+    final url = await uploadPhoto(user, image.path, 'chats/${user.uid}');
+    db.sendMessage(chatRoomId, url, user, 'image');
+  }
 
   nextMessages() async {
     if (state.loadedAll || (state.loading ?? false)) return;

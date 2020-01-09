@@ -1,4 +1,4 @@
-import 'package:face_app/util/constants.dart';
+import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';

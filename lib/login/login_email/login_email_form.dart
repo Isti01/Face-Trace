@@ -1,4 +1,4 @@
-import 'package:face_app/login/logic.dart';
+import 'package:face_app/bloc/login_logic.dart';
 import 'package:face_app/util/input_field.dart';
 import 'package:flutter/material.dart';
 

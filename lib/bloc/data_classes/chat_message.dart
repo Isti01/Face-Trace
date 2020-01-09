@@ -6,6 +6,7 @@ class ChatMessage {
   final String message;
   final String createdBy;
   final bool gotFromOther;
+  final MessageType type;
 
   ChatMessage({
     this.id,
@@ -13,6 +14,7 @@ class ChatMessage {
     this.message,
     this.createdBy,
     this.gotFromOther,
+    this.type = MessageType.text,
   });
 
   factory ChatMessage.fromMap({
@@ -27,17 +29,17 @@ class ChatMessage {
     final createdBy = map['createdBy'];
 
     return ChatMessage(
-      id: docId,
-      createdAt: createdAt,
-      createdBy: createdBy,
-      gotFromOther: uid != createdBy,
-      message: map['message'] ?? '',
-    );
+        id: docId,
+        createdAt: createdAt,
+        createdBy: createdBy,
+        gotFromOther: uid != createdBy,
+        message: map['message'] ?? '',
+        type: MessageTypeExtension.parse(map['type']));
   }
 
   @override
   String toString() {
-    return 'ChatMessage{id: $id, createdAt: $createdAt, message: $message, createdBy: $createdBy, gotFromOther: $gotFromOther}';
+    return 'ChatMessage{id: $id, createdAt: $createdAt, message: $message, createdBy: $createdBy, gotFromOther: $gotFromOther, type: $type}';
   }
 
   @override
@@ -49,4 +51,17 @@ class ChatMessage {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+enum MessageType { text, image }
+
+extension MessageTypeExtension on MessageType {
+  static MessageType parse(source) {
+    switch (source) {
+      case 'image':
+        return MessageType.image;
+      default:
+        return MessageType.text;
+    }
+  }
 }

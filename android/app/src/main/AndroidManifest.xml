@@ -14,7 +14,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="face_app"
+        android:label="Face Trace"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

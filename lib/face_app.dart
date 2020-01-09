@@ -3,6 +3,7 @@ import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/login/login.dart';
 import 'package:face_app/splash_screen/spalsh_screen.dart';
+import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +30,7 @@ class _FaceAppState extends State<FaceApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: AppName,
       home: BlocProvider.value(
         value: userBloc,
         child: BlocBuilder<UserBloc, User>(

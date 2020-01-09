@@ -1,5 +1,6 @@
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:face_app/bloc/data_classes/app_color.dart';
+import 'package:face_app/util/constants.dart';
 import 'package:flutter/material.dart';
 
 class DynamicGradientBackground extends StatefulWidget {
@@ -69,34 +70,38 @@ class DynamicGradientBackgroundState extends State<DynamicGradientBackground>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-          colors: _prevGradient.colors,
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-        ))),
-        Positioned.fill(
-          child: CircularRevealAnimation(
-            centerOffset: _startOffset,
-            minRadius: 0,
-            child: Container(
+    return Title(
+      title: AppName,
+      color: widget?.color?.colors[1] ?? Colors.white,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: _gradient.colors,
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
+                  gradient: LinearGradient(
+            colors: _prevGradient.colors,
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+          ))),
+          Positioned.fill(
+            child: CircularRevealAnimation(
+              centerOffset: _startOffset,
+              minRadius: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: _gradient.colors,
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                  ),
                 ),
               ),
+              animation: _revealAnimation,
             ),
-            animation: _revealAnimation,
           ),
-        ),
-        Positioned.fill(child: widget.child),
-      ],
+          Positioned.fill(child: widget.child),
+        ],
+      ),
     );
   }
 }

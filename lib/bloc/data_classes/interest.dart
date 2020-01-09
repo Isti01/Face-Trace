@@ -76,4 +76,31 @@ extension InterestExtension on Interest {
     }
     return null;
   }
+
+  static String toFirestore(Interest source) {
+    switch (source) {
+      case Interest.sports:
+        return 'sports';
+      case Interest.music:
+        return 'music';
+      case Interest.reading:
+        return 'reading';
+      case Interest.writing:
+        return 'writing';
+      case Interest.arts:
+        return 'arts';
+      case Interest.dancing:
+        return 'dancing';
+      case Interest.gardening:
+        return 'gardening';
+      case Interest.baking:
+        return 'baking';
+      case Interest.movies:
+        return 'movies';
+      case Interest.travelling:
+        return 'travelling';
+      default:
+        return 'travelling';
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
-import 'package:face_app/login/logic.dart';
+import 'package:face_app/bloc/login_logic.dart';
 import 'package:face_app/login/login_email/forgot_password_form.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';

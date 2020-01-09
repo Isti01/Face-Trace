@@ -44,7 +44,10 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     if (state.users[uid] != null) return true;
 
     final data = await getUserDocument(uid).get();
-    add(UserLoadedEvent(user: User.fromMap(data.data), uid: uid));
+    add(UserLoadedEvent(
+      user: User.fromMap(data.data, data.documentID),
+      uid: uid,
+    ));
     return false;
   }
 
