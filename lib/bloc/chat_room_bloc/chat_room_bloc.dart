@@ -12,10 +12,11 @@ import 'package:image_picker/image_picker.dart';
 class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   final FirebaseUser user;
   final String chatRoomId;
+  final String partner;
   StreamSubscription newMessagesStream;
   final now = DateTime.now();
 
-  ChatRoomBloc({this.user, this.chatRoomId}) {
+  ChatRoomBloc({this.user, this.chatRoomId, this.partner}) {
     newMessagesStream = db
         .getNewMessages(chatRoomId, now)
         .listen(_onNewMessage, onError: print);
@@ -25,20 +26,20 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
   ChatRoomState get initialState => ChatRoomState.init();
 
   _onNewMessage(QuerySnapshot snapshot) {
-    print(snapshot.documents);
     final last = snapshot.documents.isNotEmpty ? snapshot.documents.last : null;
 
     add(MessagesLoadedEvent(parseDocs(snapshot), last, true));
   }
 
-  sendMessage(String message) => db.sendMessage(chatRoomId, message, user);
+  sendMessage(String message) =>
+      db.sendMessage(chatRoomId, message, partner, user);
 
   sendImage(ImageSource source) async {
     final image = await ImagePicker.pickImage(source: source);
     if (image == null || !await image.exists()) return;
 
     final url = await uploadPhoto(user, image.path, 'chats/${user.uid}');
-    db.sendMessage(chatRoomId, url, user, 'image');
+    db.sendMessage(chatRoomId, url, partner, user, 'image');
   }
 
   nextMessages() async {

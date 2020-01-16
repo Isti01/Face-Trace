@@ -12,7 +12,7 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-const WaitDuration = Duration(milliseconds: 125);
+const WaitDuration = Duration(milliseconds: 150);
 const PageSwitchDuration = Duration(milliseconds: 1250);
 const SwitchCurve = Curves.easeInOutCubic;
 

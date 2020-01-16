@@ -6,13 +6,13 @@ import 'package:face_app/bloc/firebase/run_face_model.dart';
 import 'package:face_app/bloc/firebase/upload_image.dart';
 import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 final Firestore firestore = Firestore.instance;
 final CloudFunctions functions = CloudFunctions(region: 'europe-west1');
 final FirebaseStorage storage = FirebaseStorage.instance;
-
-FirebaseAuth auth = FirebaseAuth.instance;
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 CollectionReference get users => firestore.collection('users');
 
@@ -21,6 +21,8 @@ CollectionReference get chats => firestore.collection('chats');
 CollectionReference get swipes => firestore.collection('swipes');
 
 CollectionReference get faces => firestore.collection('faces');
+
+CollectionReference get tokens => firestore.collection('tokens');
 
 DocumentReference getUserDocument(String uid) => users.document(uid);
 
@@ -96,12 +98,14 @@ Future<DocumentReference> swipeUser({String uid, bool right}) async {
     'swipedBy': currentUser.uid,
     'swipedUser': uid,
     'right': right,
+    'createdAt': FieldValue.serverTimestamp(),
   });
 }
 
 Future<DocumentReference> sendMessage(
   String chatId,
   String message,
+  String to,
   FirebaseUser user, [
   String type = 'text',
 ]) async {
@@ -110,7 +114,8 @@ Future<DocumentReference> sendMessage(
     'message': message,
     'createdAt': DateTime.now(),
     'createdBy': user.uid,
-    'type': type
+    'type': type,
+    'to': to,
   });
 }
 
@@ -138,3 +143,19 @@ Stream<QuerySnapshot> getNewMessages(String chatRoomId, DateTime now) => chats
 
 Stream<QuerySnapshot> getChats(FirebaseUser user) =>
     chats.where('users.${user.uid}', isEqualTo: true).snapshots();
+
+Future<DocumentSnapshot> getChatRoom(String id) => chats.document(id).get();
+
+uploadToken(FirebaseUser user) async =>
+    tokens.document(await FirebaseMessaging().getToken()).setData({
+      'user': user.uid,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+removeToken() async =>
+    tokens.document(await FirebaseMessaging().getToken()).delete();
+
+signOut() async {
+  await removeToken();
+  return auth.signOut();
+}

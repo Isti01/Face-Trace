@@ -5,7 +5,7 @@ import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
 
-class NavBar extends StatelessWidget {
+class NavBar extends StatefulWidget {
   final int pageIndex;
   final Function(int index) onItemTapped;
 
@@ -15,16 +15,29 @@ class NavBar extends StatelessWidget {
     this.onItemTapped,
   }) : super(key: key);
 
+  @override
+  NavBarState createState() => NavBarState();
+}
+
+class NavBarState extends State<NavBar> {
+  int chatNotifications = 0;
+
   User getUser(context) => CurrentUser.of(context).user;
 
   Map<int, TabBase> tabData(context) {
     final localizations = AppLocalizations.of(context);
     return {
       0: TabBase('💖', localizations.discover),
-      1: TabBase('💬', localizations.chat),
+      1: TabBase('💬', localizations.chat, chatNotifications),
       2: TabBase(getUser(context).gender.emoji, localizations.profile),
     };
   }
+
+  incrementNotificationCount() => setState(() {
+        if (widget.pageIndex != 1) chatNotifications++;
+      });
+
+  void removeNotifications() => setState(() => chatNotifications = 0);
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +49,14 @@ class NavBar extends StatelessWidget {
         children: tabData(context)
             .entries
             .map((tab) => NavBarItemWidget(
-                selectedIndex: pageIndex,
-                index: tab.key,
-                icon: tab.value.icon,
-                appColor: getUser(context).appColor,
-                title: tab.value.title,
-                onItemSelected: onItemTapped))
+                  selectedIndex: widget.pageIndex,
+                  index: tab.key,
+                  icon: tab.value.icon,
+                  appColor: getUser(context).appColor,
+                  title: tab.value.title,
+                  onItemSelected: widget.onItemTapped,
+                  numNotifications: tab.value.numNotifications,
+                ))
             .toList(),
       ),
     );
@@ -51,6 +66,7 @@ class NavBar extends StatelessWidget {
 class TabBase {
   final String icon;
   final String title;
+  final int numNotifications;
 
-  const TabBase(this.icon, this.title);
+  const TabBase(this.icon, this.title, [this.numNotifications]);
 }

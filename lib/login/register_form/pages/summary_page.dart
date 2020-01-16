@@ -125,14 +125,13 @@ class _SummaryPageState extends State<SummaryPage> {
               ),
             ],
           ),
-          onPressed: loading ? () {} : onPressed,
+          onPressed: loading ? () {} : () => onPressed(localizations),
         ),
       ),
     );
   }
 
   onPressed(AppLocalizations localizations) async {
-    print(widget.state);
     this.setState(() => loading = true);
     try {
       if (!widget.state.validate()) {

@@ -45,17 +45,48 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         user: await matchBloc.getUser(partner),
       );
     }).toList();
-    _updateBlocs(snapshot.documentChanges);
+    _updateBlocs(snapshot.documentChanges, chatRooms);
     add(ChatsUpdatedEvent(chatRooms));
   }
 
-  _updateBlocs(List<DocumentChange> changes) {
-    for (var change in changes) {
+  Future<ChatRoomBloc> getChatRoomBloc(String id, String partnerId) async {
+    final room = chatRooms[id];
+    if (room != null) return room;
+
+    final roomData = await getChatRoom(id);
+    final data = roomData.data;
+    if (!roomData.exists || (data?.isEmpty ?? true)) return null;
+
+    final chat = Chat.fromMap(
+      data,
+      chatId: id,
+      user: await matchBloc.getUser(partnerId),
+    );
+
+    chatRooms[id] = ChatRoomBloc(
+      user: user,
+      chatRoomId: id,
+      partner: partnerId,
+    );
+
+    add(ChatsUpdatedEvent({...(state.chats ?? []), chat}.toList()));
+
+    return chatRooms[id];
+  }
+
+  _updateBlocs(List<DocumentChange> changes, List<Chat> chats) {
+    for (int i = 0; i < changes.length; i++) {
+      final change = changes[i];
       final docId = change.document.documentID;
 
       switch (change.type) {
         case DocumentChangeType.added:
-          chatRooms[docId] = ChatRoomBloc(user: user, chatRoomId: docId);
+          if (chatRooms[docId] != null) continue;
+          chatRooms[docId] = ChatRoomBloc(
+            user: user,
+            chatRoomId: docId,
+            partner: chats[i].user.uid,
+          );
           break;
         case DocumentChangeType.modified:
           break;

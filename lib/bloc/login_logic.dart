@@ -51,9 +51,6 @@ Future<bool> register(
     );
 
     final user = authResult.user;
-
-    print(user.toString());
-
     final successful = user != null;
 
     if (!successful) errorCodeToCallback(context, '', onRegisterFailed);

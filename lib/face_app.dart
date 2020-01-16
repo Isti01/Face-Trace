@@ -3,7 +3,7 @@ import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
 import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/login.dart';
-import 'package:face_app/splash_screen/spalsh_screen.dart';
+import 'package:face_app/splash_screen/splash_screen.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +32,11 @@ class _FaceAppState extends State<FaceApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         const AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('hu', ''),
       ],
       title: AppName,
       home: BlocProvider.value(

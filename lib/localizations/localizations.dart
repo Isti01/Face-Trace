@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppLocalizations {
-  final Locale locale;
+  final String locale;
 
   final Map<String, String> values;
-  AppLocalizations(this.locale) : values = localizedValues[locale.languageCode];
+  AppLocalizations(this.locale) : values = localizedValues[locale];
 
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
@@ -106,12 +106,11 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      localizedValues.containsKey(locale.languageCode);
+  bool isSupported(Locale locale) => true;
 
   @override
   Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
+    return SynchronousFuture<AppLocalizations>(AppLocalizations('hu'));
   }
 
   @override

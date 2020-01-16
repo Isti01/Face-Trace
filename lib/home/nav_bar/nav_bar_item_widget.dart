@@ -10,6 +10,7 @@ class NavBarItemWidget extends StatelessWidget {
   final String icon;
   final int index;
   final Function(int i) onItemSelected;
+  final int numNotifications;
 
   const NavBarItemWidget({
     Key key,
@@ -19,10 +20,13 @@ class NavBarItemWidget extends StatelessWidget {
     this.icon,
     this.index,
     this.onItemSelected,
+    this.numNotifications,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return GestureDetector(
       onTap: () => onItemSelected(index),
       child: Material(
@@ -30,17 +34,40 @@ class NavBarItemWidget extends StatelessWidget {
         child: Padding(
           // this way it is easier to tap the navbar items
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [_iconWidget, animatedText],
-            ),
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [_iconWidget, animatedText],
+                ),
+              ),
+              if (numNotifications != null && numNotifications > 0)
+                _notificationCircle(textTheme)
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _notificationCircle(TextTheme textTheme) => Positioned(
+        top: 0,
+        right: 0,
+        child: Material(
+          shape: CircleBorder(),
+          color: Colors.red,
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: Text(
+              numNotifications.toString(),
+              style: textTheme.caption.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
+      );
 
   Widget get _iconWidget =>
       Text(icon, style: TextStyle(inherit: true, fontSize: 24));

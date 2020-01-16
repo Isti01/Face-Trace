@@ -4,6 +4,7 @@ import 'package:face_app/bloc/match_bloc/match_bloc.dart';
 import 'package:face_app/home/chat_page/chats_page.dart';
 import 'package:face_app/home/match_page/match_page.dart';
 import 'package:face_app/home/nav_bar/nav_bar.dart';
+import 'package:face_app/home/notification_handler.dart';
 import 'package:face_app/home/user_page/user_page.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
@@ -24,7 +25,7 @@ class FaceAppHome extends StatefulWidget {
 
 class _FaceAppHomeState extends State<FaceAppHome> {
   PageController _controller;
-
+  GlobalKey<NavBarState> _navBarKey = GlobalKey(debugLabel: 'NavBarKey');
   int pageIndex = 0;
   MatchBloc matchBloc;
   ChatBloc chatBloc;
@@ -33,6 +34,7 @@ class _FaceAppHomeState extends State<FaceAppHome> {
   void initState() {
     super.initState();
     _initBlocs();
+
     _controller = PageController();
   }
 
@@ -43,6 +45,7 @@ class _FaceAppHomeState extends State<FaceAppHome> {
 
   _onItemTapped(int i) {
     FocusScope.of(context).unfocus();
+    if (i == 1) _navBarKey.currentState.removeNotifications();
     setState(() {
       _controller.animateToPage(
         pageIndex = i,
@@ -71,25 +74,32 @@ class _FaceAppHomeState extends State<FaceAppHome> {
           value: matchBloc,
           child: BlocProvider.value(
             value: chatBloc,
-            child: DynamicGradientBackground(
-              color: user.appColor,
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                body: Column(
-                  children: [
-                    Expanded(
-                      child: PageView(
-                        physics: NeverScrollableScrollPhysics(),
-                        controller: _controller,
-                        children: [
-                          MatchPage(key: PageStorageKey('discover page')),
-                          ChatsPage(key: PageStorageKey('chat page')),
-                          UserPage(key: PageStorageKey('user page')),
-                        ],
+            child: NotificationHandler(
+              navBarKey: _navBarKey,
+              child: DynamicGradientBackground(
+                color: user.appColor,
+                child: Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: Column(
+                    children: [
+                      Expanded(
+                        child: PageView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _controller,
+                          children: [
+                            MatchPage(key: PageStorageKey('discover page')),
+                            ChatsPage(key: PageStorageKey('chat page')),
+                            UserPage(key: PageStorageKey('user page')),
+                          ],
+                        ),
                       ),
-                    ),
-                    NavBar(onItemTapped: _onItemTapped, pageIndex: pageIndex),
-                  ],
+                      NavBar(
+                        key: _navBarKey,
+                        onItemTapped: _onItemTapped,
+                        pageIndex: pageIndex,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

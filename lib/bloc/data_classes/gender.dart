@@ -15,9 +15,9 @@ extension GenderExtension on Gender {
       case Gender.female:
         return "${localizations.femaleGender} $emoji";
       case Gender.male:
-        return "${localizations.femaleGender} $emoji";
+        return "${localizations.maleGender} $emoji";
       default:
-        return "${localizations.femaleGender} $emoji";
+        return "${localizations.otherGender} $emoji";
     }
   }
 

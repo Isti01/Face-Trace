@@ -26,11 +26,13 @@ class UserBloc extends Bloc<UserEvent, User> {
     await dataSubscription?.cancel();
     dataSubscription = null;
 
-    if (user != null)
-      dataSubscription = streamUserData(user).listen(
-        (doc) => add(UserDataUpdated(doc)),
-        cancelOnError: false,
-      );
+    if (user == null) return;
+
+    dataSubscription = streamUserData(user).listen(
+      (doc) => add(UserDataUpdated(doc)),
+      cancelOnError: false,
+    );
+    await uploadToken(user);
   }
 
   @override

@@ -4,8 +4,6 @@ import 'package:face_app/login/register_form/pages/form_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-final firstDate = DateTime.fromMillisecondsSinceEpoch(0);
-
 class BirthDatePage extends StatefulWidget {
   final Function(DateTime date) onDateChanged;
   final DateTime startDate;

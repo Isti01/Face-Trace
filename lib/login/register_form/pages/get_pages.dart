@@ -32,28 +32,34 @@ List<Widget> getPages(
 
   return [
     NamePage(
+      key: ValueKey('RegisterNamePage'),
       onNameChanged: bloc.nameChanged,
       onFinished: nextPage,
       initialName: state.name,
     ),
     ProfileImagePage(
+      key: ValueKey('RegisterProfileImagePage'),
       onPhotoChanged: bloc.onPhotoChanged,
       photoFilePath: state.facePhoto,
       color: state.color,
     ),
     BirthDatePage(
+      key: ValueKey('RegisterBirthDatePage'),
       onDateChanged: bloc.onDateChanged,
       startDate: state.birthDate,
     ),
     GenderPage(
+      key: ValueKey('RegisterGenderPage'),
       initialGender: state.gender,
       onGenderChanged: bloc.onGenderChanged,
     ),
     AttractedToPage(
+      key: ValueKey('RegisterAttractedToPage'),
       initialGenders: state.attractedTo,
       onGendersChanged: bloc.onAttractedToChanged,
     ),
     ColorPage(
+      key: ValueKey('RegisterColorPage'),
       initialColor: state.color,
       onColorChanged: (color, offset) {
         backgroundKey.currentState
@@ -63,6 +69,7 @@ List<Widget> getPages(
     ),
     for (int i = 0; i < numPages; i++)
       InterestsPage(
+        key: ValueKey('RegisterInterestsPage$i'),
         choices: interests.sublist(i * 6, math.min((i * 6) + 6, length)),
         numPages: numPages,
         pageNum: i + 1,
@@ -71,6 +78,7 @@ List<Widget> getPages(
         initialSelected: state.interests,
       ),
     DescriptionPage(
+      key: ValueKey('RegisterDescriptionPage'),
       initialDescription: state.description,
       onDescriptionChanged: bloc.onDescriptionChanged,
       onSubmitted: (desc) {
@@ -79,6 +87,7 @@ List<Widget> getPages(
       },
     ),
     SummaryPage(
+      key: ValueKey('RegisterSummaryPage'),
       state: state,
       user: user,
       onFacesDetected: bloc.onFacesDetected,

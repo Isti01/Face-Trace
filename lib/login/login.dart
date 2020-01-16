@@ -7,7 +7,6 @@ import 'package:face_app/login/choose_face/choose_face.dart';
 import 'package:face_app/login/login_email/login_email.dart';
 import 'package:face_app/login/login_theme.dart';
 import 'package:face_app/login/register_form/register_form.dart';
-import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';

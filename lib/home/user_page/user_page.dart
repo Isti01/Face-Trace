@@ -83,7 +83,7 @@ class UserPage extends StatelessWidget {
                       SizedBox(height: 20),
                       OutlineButton(
                         child: Text(localizations.logOut + " 👋"),
-                        onPressed: () => auth.signOut(),
+                        onPressed: () => signOut(),
                         shape: AppBorder,
                       ),
                     ],
