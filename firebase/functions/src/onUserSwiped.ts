@@ -36,6 +36,7 @@ export const handler = (
                 lastSwipe: swipedBy,
                 messageFrom: messageFrom,
                 ...chatId ? {chatId: chatId} : {},
+                createdAt: new Date().getTime().toString(),
             },
         }
     };

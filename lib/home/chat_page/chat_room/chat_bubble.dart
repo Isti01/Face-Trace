@@ -93,6 +93,6 @@ class ChatBubble extends StatelessWidget {
                   crossFadeState: e == null
                       ? CrossFadeState.showFirst
                       : CrossFadeState.showSecond,
-                  duration: Duration(milliseconds: 250)),
+                  duration: Duration(milliseconds: 50)),
             );
 }

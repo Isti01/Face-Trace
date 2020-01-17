@@ -12,6 +12,3 @@ const msg = messaging();
 exports.getUserList = euWest1.https.onCall(getUserList.handler(db));
 exports.onUserSwiped = euWest1.firestore.document('swipes/{swipe}').onCreate(onUserSwiped.handler(db, msg));
 exports.onNewMessage = euWest1.firestore.document('chats/{chat}/messages/{message}').onCreate(onNewMessage.handler(db, msg));
-
-
-

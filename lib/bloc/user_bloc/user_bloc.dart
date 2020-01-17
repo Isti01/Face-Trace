@@ -33,6 +33,8 @@ class UserBloc extends Bloc<UserEvent, User> {
       cancelOnError: false,
     );
     await uploadToken(user);
+
+    await uploadLocation(user);
   }
 
   @override

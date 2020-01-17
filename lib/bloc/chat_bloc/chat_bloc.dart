@@ -49,27 +49,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     add(ChatsUpdatedEvent(chatRooms));
   }
 
-  Future<ChatRoomBloc> getChatRoomBloc(String id, String partnerId) async {
+  Future<ChatRoomBloc> getChatRoomBloc(String id) async {
     final room = chatRooms[id];
     if (room != null) return room;
-
     final roomData = await getChatRoom(id);
     final data = roomData.data;
     if (!roomData.exists || (data?.isEmpty ?? true)) return null;
 
+    final uids = Chat.uidsFromMap(data);
+    final partner = uids.firstWhere((uid) => uid != user.uid);
+
     final chat = Chat.fromMap(
       data,
       chatId: id,
-      user: await matchBloc.getUser(partnerId),
+      user: await matchBloc.getUser(partner),
     );
 
-    chatRooms[id] = ChatRoomBloc(
-      user: user,
-      chatRoomId: id,
-      partner: partnerId,
-    );
+    chatRooms[id] = ChatRoomBloc(user: user, chatRoomId: id, partner: partner);
 
-    add(ChatsUpdatedEvent({...(state.chats ?? []), chat}.toList()));
+    add(ChatsUpdatedEvent(<Chat>{...(state.chats ?? []), chat}.toList()));
 
     return chatRooms[id];
   }

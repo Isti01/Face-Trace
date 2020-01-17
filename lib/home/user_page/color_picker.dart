@@ -28,7 +28,7 @@ class ColorPicker extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Text(
-            localizations.changeAppColor,
+            localizations.changeAppColor + ' 🎨',
             style: Theme.of(context).textTheme.button.apply(
                   color: Colors.white,
                 ),

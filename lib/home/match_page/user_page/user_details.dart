@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 
 class UserDetails extends StatelessWidget {
   final User user;
+  final String heroTag;
 
-  const UserDetails({Key key, this.user}) : super(key: key);
+  const UserDetails({Key key, this.user, this.heroTag}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
@@ -28,13 +29,8 @@ class UserDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SafeArea(child: SizedBox(height: kToolbarHeight)),
-          UserImage(user: user),
+          UserImage(user: user, heroTag: heroTag),
           SizedBox(height: 24),
-          Text(
-            '${user?.name ?? ''} ${user?.gender?.emoji ?? ''}',
-            style: textTheme.display1,
-            textAlign: TextAlign.center,
-          ),
           if ((user?.images?.length ?? 0) > 0) ...[
             PageDivider(
               text: localizations.gallery,

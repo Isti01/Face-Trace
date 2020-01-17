@@ -25,37 +25,47 @@ class NotificationHandler extends StatefulWidget {
 }
 
 class _NotificationHandlerState extends State<NotificationHandler> {
+  var lastMessage;
+
   ChatBloc get chatBloc => BlocProvider.of<ChatBloc>(context);
 
   MatchBloc get matchBloc => BlocProvider.of<MatchBloc>(context);
 
   UserBloc get userBloc => BlocProvider.of<UserBloc>(context);
 
-  openChat(String partnerId, String blocId) async {
+  openChat(String blocId, [bool replace = false]) async {
     // false lint
-    final bloc = await chatBloc.getChatRoomBloc(blocId, partnerId);
-
+    final bloc = await chatBloc.getChatRoomBloc(blocId);
+    if (bloc == null) {
+      Navigator.pop(context);
+      return;
+    }
     // false lint
     final userBloc = this.userBloc;
-    final partnerData = await matchBloc.getUser(partnerId);
+    final partnerData = await matchBloc.getUser(bloc.partner);
 
     if (bloc == null || partnerData == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (c) => CurrentUser.passOverUser(
-          bloc: userBloc,
-          child: ChatRoom(
-            bloc: bloc,
-            partner: partnerData,
-          ),
+
+    final route = MaterialPageRoute(
+      builder: (c) => CurrentUser.passOverUser(
+        bloc: userBloc,
+        child: ChatRoom(
+          bloc: bloc,
+          partner: partnerData,
         ),
       ),
     );
+
+    if (replace)
+      Navigator.pushReplacement(context, route);
+    else
+      Navigator.push(context, route);
   }
 
-  showMatchScreen(String partner, chatId) async {
+  showMatchScreen(String partner, String chatId) async {
     final partnerData = await matchBloc.getUser(partner);
+
+    if (partnerData == null) return;
 
     // false lint
     final userBloc = this.userBloc;
@@ -68,7 +78,7 @@ class _NotificationHandlerState extends State<NotificationHandler> {
           bloc: userBloc,
           child: MatchScreen(
             partnerData: partnerData,
-            openChat: chatId != null ? () => openChat(partner, chatId) : null,
+            openChat: chatId != null ? () => openChat(chatId, true) : null,
           ),
         ),
       ),
@@ -76,11 +86,13 @@ class _NotificationHandlerState extends State<NotificationHandler> {
   }
 
   onLaunch(Map<String, dynamic> data) async {
+    if (lastMessage == data) return;
+    lastMessage = data;
     final message = NotificationData.fromMap(data);
     if (!message.valid) return;
     switch (message.type) {
       case NotificationType.message:
-        openChat(message.from, message.chatId);
+        openChat(message.chatId);
         return;
       case NotificationType.match:
         showMatchScreen(message.from, message.chatId);
@@ -93,9 +105,13 @@ class _NotificationHandlerState extends State<NotificationHandler> {
     super.initState();
 
     FirebaseMessaging().configure(
-      onResume: (data) => onLaunch(data),
       onLaunch: (data) => onLaunch(data),
+      onResume: (data) => onLaunch(data),
       onMessage: (data) async {
+        print(data);
+        if (lastMessage == data) return;
+        lastMessage = data;
+
         final message = NotificationData.fromMap(data);
         if (!message.valid) return;
 

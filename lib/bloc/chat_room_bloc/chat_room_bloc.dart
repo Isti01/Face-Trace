@@ -42,8 +42,8 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
     db.sendMessage(chatRoomId, url, partner, user, 'image');
   }
 
-  nextMessages() async {
-    if (state.loadedAll || (state.loading ?? false)) return;
+  nextMessages([force = false]) async {
+    if (!force && (state.loadedAll || (state.loading ?? false))) return;
 
     add(LoadingMessagesEvent());
 
@@ -87,7 +87,7 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
         messages: messages.toList(),
       );
       if (event.lastDoc != null)
-        newState = newState.update(lastDoc: event.lastDoc);
+        newState = newState.update(lastDoc: event.lastDoc, loading: false);
     } else if (event is LoadingMessagesEvent) {
       newState = state.update(loading: true);
     } else if (event is AllMessagesLoaded) {
@@ -96,7 +96,6 @@ class ChatRoomBloc extends Bloc<ChatRoomEvent, ChatRoomState> {
 
     if (newState == null)
       throw UnimplementedError('${event.runtimeType} was not mapped to state');
-
     yield newState;
   }
 

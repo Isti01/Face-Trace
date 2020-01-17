@@ -8,6 +8,11 @@ import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:location/location.dart';
+
+final location = Location();
+final geo = Geoflutterfire();
 
 final Firestore firestore = Firestore.instance;
 final CloudFunctions functions = CloudFunctions(region: 'europe-west1');
@@ -132,7 +137,7 @@ Future<QuerySnapshot> getMessages(
 
   if (lastDoc != null) query = query.startAfterDocument(lastDoc);
 
-  return query.limit(10).getDocuments();
+  return query.limit(15).getDocuments();
 }
 
 Stream<QuerySnapshot> getNewMessages(String chatRoomId, DateTime now) => chats
@@ -145,6 +150,20 @@ Stream<QuerySnapshot> getChats(FirebaseUser user) =>
     chats.where('users.${user.uid}', isEqualTo: true).snapshots();
 
 Future<DocumentSnapshot> getChatRoom(String id) => chats.document(id).get();
+
+uploadLocation(FirebaseUser user) async {
+  try {
+    if (!await location.hasPermission()) await location.requestPermission();
+
+    await location.changeSettings(accuracy: LocationAccuracy.LOW);
+
+    final data = await location.getLocation();
+    final point = geo.point(latitude: data.latitude, longitude: data.longitude);
+    await getUserDocument(user.uid).updateData({'location': point.data});
+  } catch (e, s) {
+    print([e, s]);
+  }
+}
 
 uploadToken(FirebaseUser user) async =>
     tokens.document(await FirebaseMessaging().getToken()).setData({

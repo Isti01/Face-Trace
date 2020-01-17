@@ -24,8 +24,8 @@ class _ChatRoomState extends State<ChatRoom> {
 
   @override
   void initState() {
-    if ((widget.bloc.state.messages?.isEmpty ?? true))
-      widget.bloc.nextMessages();
+    if (widget.bloc.state.messages?.isEmpty ?? true)
+      widget.bloc.nextMessages(true);
 
     super.initState();
   }

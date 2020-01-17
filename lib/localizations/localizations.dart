@@ -1,6 +1,25 @@
+import 'package:face_app/bloc/data_classes/language.dart';
 import 'package:face_app/localizations/localized_values.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  final Language lang;
+
+  const AppLocalizationsDelegate(this.lang);
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<AppLocalizations> load(Locale locale) =>
+      SynchronousFuture<AppLocalizations>(AppLocalizations(
+        lang.firestoreString,
+      ));
+
+  @override
+  bool shouldReload(AppLocalizationsDelegate old) => true;
+}
 
 class AppLocalizations {
   final String locale;
@@ -100,19 +119,8 @@ class AppLocalizations {
   String get mInterests => values['mInterests'];
   String get mDescription => values['mDescription'];
   String get dateFormat => values['dateFormat'];
-}
-
-class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
-  const AppLocalizationsDelegate();
-
-  @override
-  bool isSupported(Locale locale) => true;
-
-  @override
-  Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(AppLocalizations('hu'));
-  }
-
-  @override
-  bool shouldReload(AppLocalizationsDelegate old) => true;
+  String get lang => values['lang'];
+  String get matchTitle => values['matchTitle'];
+  String get youAnd => values['youAnd'];
+  String get likeEachOther => values['likeEachOther'];
 }

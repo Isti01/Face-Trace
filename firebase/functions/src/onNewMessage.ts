@@ -29,6 +29,7 @@ export const handler = (
             notificationType: 'chat_message',
             messageFrom: createdBy,
             chatId: context.params.chat,
+            createdAt: new Date().getTime().toString(),
         },
     };
 

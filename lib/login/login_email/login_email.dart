@@ -2,12 +2,11 @@ import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/login_logic.dart';
 import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/login/login_email/forgot_password_form.dart';
+import 'package:face_app/login/login_email/login_email_form_base.dart';
+import 'package:face_app/login/login_email/login_tabbar.dart';
 import 'package:face_app/util/app_toast.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:flutter/material.dart';
-
-import 'login_email_form_base.dart';
-import 'login_tabbar.dart';
 
 class LoginEmail extends StatefulWidget {
   final Function() onLoginCompleted;

@@ -16,6 +16,7 @@ class LoadingMessagesEvent extends ChatRoomEvent {}
 class AllMessagesLoaded extends ChatRoomEvent {}
 
 class ChatRoomState {
+  final String partner;
   final bool hasMessages;
   final List<ChatMessage> messages;
   final DocumentSnapshot lastDoc;
@@ -28,6 +29,7 @@ class ChatRoomState {
     this.lastDoc,
     this.loadedAll,
     this.loading,
+    this.partner,
   });
 
   factory ChatRoomState.init() =>
@@ -38,14 +40,37 @@ class ChatRoomState {
     bool loading,
     List<ChatMessage> messages,
     DocumentSnapshot lastDoc,
+    String partner,
   }) =>
       ChatRoomState(
         messages: messages ?? this.messages,
         lastDoc: lastDoc ?? this.lastDoc,
         loading: loading ?? this.loading,
+        partner: partner ?? this.partner,
         hasMessages: (messages ?? this.messages)?.isNotEmpty ?? false,
         loadedAll: loadedAll ?? this.loadedAll,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChatRoomState &&
+          runtimeType == other.runtimeType &&
+          partner == other.partner &&
+          hasMessages == other.hasMessages &&
+          messages == other.messages &&
+          lastDoc == other.lastDoc &&
+          loading == other.loading &&
+          loadedAll == other.loadedAll;
+
+  @override
+  int get hashCode =>
+      partner.hashCode ^
+      hasMessages.hashCode ^
+      messages.hashCode ^
+      lastDoc.hashCode ^
+      loading.hashCode ^
+      loadedAll.hashCode;
 
   @override
   String toString() {

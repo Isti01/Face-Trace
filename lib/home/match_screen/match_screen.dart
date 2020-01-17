@@ -1,5 +1,6 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
+import 'package:face_app/localizations/localizations.dart';
 import 'package:face_app/util/constants.dart';
 import 'package:face_app/util/current_user.dart';
 import 'package:face_app/util/dynamic_gradient.dart';
@@ -17,6 +18,8 @@ class MatchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final user = CurrentUser.of(context).user;
     final size = MediaQuery.of(context).size;
 
@@ -37,7 +40,7 @@ class MatchScreen extends StatelessWidget {
             child: SafeArea(
               child: Stack(
                 children: [
-                  Positioned.fill(child: _body(textTheme, size)),
+                  Positioned.fill(child: _body(textTheme, size, localizations)),
                   Positioned(
                     child: SafeArea(
                       child: Padding(
@@ -58,19 +61,19 @@ class MatchScreen extends StatelessWidget {
     );
   }
 
-  Widget _body(TextTheme textTheme, Size size) => Center(
+  Widget _body(TextTheme textTheme, Size size, AppLocalizations loc) => Center(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "🎉 Egymásra találtatok! 🎉",
+                "🎉 ${loc.matchTitle} 🎉",
                 style: textTheme.headline,
               ),
               SizedBox(height: 8),
               Text(
-                "Te és ${partnerData.name} kedvelitek egymást! 💕",
+                "${loc.youAnd} ${partnerData.name} ${loc.likeEachOther} 💕",
                 style: textTheme.subtitle,
               ),
               SizedBox(height: 24),
@@ -83,8 +86,8 @@ class MatchScreen extends StatelessWidget {
               SizedBox(height: 24),
               if (openChat != null)
                 OutlineButton(
-                  child: Text('Küldj üzenetet!', style: textTheme.title),
-                  onPressed: () => throw UnimplementedError('open chat'),
+                  child: Text(loc.sendAMessage, style: textTheme.title),
+                  onPressed: () => openChat(),
                   color: Colors.white,
                   borderSide: BorderSide(color: Colors.white),
                   textColor: Colors.white,

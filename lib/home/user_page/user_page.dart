@@ -1,3 +1,4 @@
+import 'package:face_app/bloc/data_classes/language.dart';
 import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:face_app/bloc/user_bloc/user_bloc.dart';
 import 'package:face_app/home/face_app_home.dart';
@@ -74,6 +75,14 @@ class UserPage extends StatelessWidget {
                         text: localizations.interests,
                       ),
                       interests(context, user),
+                      PageDivider(),
+                      language(
+                        theme: textTheme,
+                        lang: user.language,
+                        loc: localizations,
+                        langChanged: (Language lang) => getBloc(context)
+                            .fieldChanged(lang.firestoreString, 'language'),
+                      ),
                       PageDivider(),
                       ColorPicker(
                         color: user.appColor,

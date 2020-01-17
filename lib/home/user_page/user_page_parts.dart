@@ -1,11 +1,13 @@
 import 'package:face_app/bloc/data_classes/app_color.dart';
 import 'package:face_app/bloc/data_classes/interest.dart';
+import 'package:face_app/bloc/data_classes/language.dart';
 import 'package:face_app/bloc/data_classes/user.dart';
 import 'package:face_app/home/user_page/avatar.dart';
 import 'package:face_app/home/user_page/editable_field.dart';
 import 'package:face_app/home/user_page/interests.dart';
 import 'package:face_app/home/user_page/user_page.dart';
 import 'package:face_app/localizations/localizations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Widget avatar(BuildContext context, User user, double avatarTop) => Positioned(
@@ -50,5 +52,35 @@ Widget description(User user, context, TextTheme textTheme) => SizedBox(
             return false;
           return UserPage.getBloc(context).fieldChanged(desc, 'description');
         },
+      ),
+    );
+
+Widget language({
+  TextTheme theme,
+  Language lang,
+  Function(Language lang) langChanged,
+  AppLocalizations loc,
+}) =>
+    Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 44),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          Text('${loc.lang} 📋', style: theme.title),
+          SizedBox(width: 16),
+          DropdownButtonHideUnderline(
+            child: DropdownButton<Language>(
+              value: lang,
+              items: Language.values
+                  .map((lang) => DropdownMenuItem<Language>(
+                        value: lang,
+                        child: Text(lang.text, style: theme.subtitle),
+                      ))
+                  .toList(),
+              onChanged: langChanged,
+            ),
+          )
+        ],
       ),
     );

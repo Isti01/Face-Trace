@@ -31,35 +31,37 @@ class _FaceAppState extends State<FaceApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        const AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      title: AppName,
-      home: BlocProvider.value(
-        value: userBloc,
-        child: BlocBuilder<UserBloc, User>(
-          bloc: userBloc,
-          builder: (BuildContext context, User state) {
-            if (state.initial) return SplashScreen();
-            final user = state.user;
-
-            if (user == null) return Login();
-            if (!state.fetchedData) return SplashScreen();
-
-            if (!state.hasData) return Login(startPage: 1, initialUser: user);
-
-            return CurrentUser(
-              key: ValueKey(user.uid),
-              user: state,
-              child: FaceAppHome(user: user),
-            );
-          },
+    return BlocProvider.value(
+      value: userBloc,
+      child: BlocBuilder<UserBloc, User>(
+        bloc: userBloc,
+        builder: (BuildContext context, User state) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [
+            AppLocalizationsDelegate(state.language),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          title: AppName,
+          home: _buildHome(context, state),
         ),
       ),
+    );
+  }
+
+  Widget _buildHome(BuildContext context, User state) {
+    if (state.initial) return SplashScreen();
+    final user = state.user;
+
+    if (user == null) return Login();
+    if (!state.fetchedData) return SplashScreen();
+
+    if (!state.hasData) return Login(startPage: 1, initialUser: user);
+
+    return CurrentUser(
+      key: ValueKey(user.uid),
+      user: state,
+      child: FaceAppHome(user: user),
     );
   }
 

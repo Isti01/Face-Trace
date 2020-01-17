@@ -89,10 +89,11 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     final newIndex = index + 1;
 
-    if (newIndex >= uids.length) return;
-    uids
-        .getRange(newIndex, math.min(newIndex + NumDisplayedUsers, uids.length))
-        .forEach(loadUser);
+    if (newIndex < uids.length)
+      uids
+          .getRange(
+              newIndex, math.min(newIndex + NumDisplayedUsers, uids.length))
+          .forEach(loadUser);
 
     swipeUser(uid: uid, right: right);
   }

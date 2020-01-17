@@ -5,22 +5,26 @@ import 'package:flutter/material.dart';
 
 class UserImage extends StatefulWidget {
   final User user;
+  final String heroTag;
 
-  const UserImage({Key key, this.user}) : super(key: key);
+  const UserImage({Key key, this.user, this.heroTag}) : super(key: key);
 
   @override
   _UserImageState createState() => _UserImageState();
 }
 
 class _UserImageState extends State<UserImage> {
+  String get defaultTag =>
+      (widget.user.profileImage ?? widget.user.uid) + 'matchUserImage';
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final imageSize = size.shortestSide * 0.8 / 2;
     final imageUrl = widget.user?.profileImage;
     final hasImage = imageUrl != null;
-    final tag =
-        (widget.user.profileImage ?? widget.user.uid) + 'matchUserImage';
+    final tag = widget.heroTag ?? defaultTag;
+
     return Center(
       child: Hero(
         tag: tag,

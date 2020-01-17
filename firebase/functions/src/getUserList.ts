@@ -14,9 +14,8 @@ export const handler = (firestore: FirebaseFirestore.Firestore) => async (data: 
 
     const faceData = await getFaceData(uid, faces, swipes);
 
-    const interests = Array.isArray(userData['interests']) ? userData['interests'] : [];
+    const person = await Person.parse(faceData, uid, userData);
 
-    const person = new Person(faceData, interests, uid);
     const attractedTo = userData['attractedTo'] || [];
     let allUsersQuery: FirebaseFirestore.QuerySnapshot;
 
@@ -38,7 +37,9 @@ export const handler = (firestore: FirebaseFirestore.Firestore) => async (data: 
 
                 if (await wasSwiped(uid, id, swipes, transaction)) continue;
 
-                allPersons[id] = new Person(null, (doc.data() || {})['interests'], id);
+                const partnerData = doc.data() || {};
+
+                allPersons[id] = await Person.parse(undefined, id, partnerData);
             }
         }
     );
@@ -55,12 +56,12 @@ export const handler = (firestore: FirebaseFirestore.Firestore) => async (data: 
     });
 
     const allUserIds = allUsersDocs.map(doc => doc.id).filter(id => allPersons[id])
-        .sort((s1, s2) => allPersons[s1].distance(person) - allPersons[s2].distance(person));
+        .sort((s1, s2) => allPersons[s1].evaluate(person) - allPersons[s2].evaluate(person));
 
     return {
         successful: true,
         users: allUserIds,
         message: allUserIds.length > 0 ? "Request was successful" : "Could not find users"
-    };
+    }
 };
 
