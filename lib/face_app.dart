@@ -52,7 +52,6 @@ class _FaceAppState extends State<FaceApp> {
   Widget _buildHome(BuildContext context, User state) {
     if (state.initial) return SplashScreen();
     final user = state.user;
-
     if (user == null) return Login();
     if (!state.fetchedData) return SplashScreen();
 

@@ -58,6 +58,7 @@ class _ProfileImagePageState extends State<ProfileImagePage> {
           ),
           SizedBox(height: 32),
           Wrap(
+            spacing: 16,
             alignment: WrapAlignment.spaceEvenly,
             children: [
               RaisedButton.icon(

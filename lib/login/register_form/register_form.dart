@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:face_app/bloc/firebase/download_image.dart';
+import 'package:face_app/bloc/firebase/firestore_queries.dart';
 import 'package:face_app/bloc/register_bloc/register_bloc.dart';
 import 'package:face_app/bloc/register_bloc/register_bloc_states.dart';
 import 'package:face_app/login/register_form/pages/get_pages.dart';
@@ -117,14 +118,27 @@ class _RegisterFormState extends State<RegisterForm> {
               onUp: prevPage,
               onDown: nextPage,
             ),
-            Align(
-              alignment: Alignment.bottomLeft,
+            Positioned(
+              bottom: 0,
+              left: 0,
+              top: 0,
               child: PageIndicator(
                 controller: controller,
                 numPages: pageCount,
                 jumpToPage: jumpToPage,
               ),
-            )
+            ),
+            Positioned(
+                top: 0,
+                right: 0,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                        icon: Icon(Icons.exit_to_app),
+                        onPressed: () => signOut()),
+                  ),
+                ))
           ],
         );
       },

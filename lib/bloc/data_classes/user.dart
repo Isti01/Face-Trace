@@ -151,8 +151,7 @@ class User {
       profileImage != null ||
       attractedTo != null ||
       images != null ||
-      location != null ||
-      language != null;
+      location != null;
 
   @override
   String toString() {
