@@ -174,7 +174,7 @@ const Map<String, Map<String, String>> localizedValues = {
     'newImage': "Take a picture!",
     'existingImage': "Select a picture!",
     'summaryText': "Is your introduction correct?",
-    'summaryHint': "You can change theese later",
+    'summaryHint': "You can change these later",
     'summeryFinish': "I'm finished!",
     'invalidForm': "Fill out the fields!",
     'noFace': "No face detected!",

@@ -22,6 +22,7 @@ class RegisterForm extends StatefulWidget {
   final FirebaseUser user;
   final GlobalKey<DynamicGradientBackgroundState> backgroundKey;
   final Function(List<Face> face) onRegistrationFinished;
+  final Function() onBack;
 
   const RegisterForm({
     Key key,
@@ -29,6 +30,7 @@ class RegisterForm extends StatefulWidget {
     this.backgroundKey,
     this.bloc,
     @required this.onRegistrationFinished,
+    this.onBack,
   }) : super(key: key);
 
   @override
@@ -128,17 +130,23 @@ class _RegisterFormState extends State<RegisterForm> {
                 jumpToPage: jumpToPage,
               ),
             ),
-            Positioned(
+            if (widget.onBack != null)
+              Positioned(
                 top: 0,
                 right: 0,
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
-                        icon: Icon(Icons.exit_to_app),
-                        onPressed: () => signOut()),
+                      icon: Icon(Icons.exit_to_app),
+                      onPressed: () async {
+                        await signOut();
+                        widget.onBack();
+                      },
+                    ),
                   ),
-                ))
+                ),
+              )
           ],
         );
       },

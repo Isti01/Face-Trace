@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class Login extends StatefulWidget {
   final int startPage;
   final FirebaseUser initialUser;
+
   const Login({
     Key key,
     this.startPage = 0,
@@ -48,6 +49,7 @@ class _LoginState extends State<Login> {
           color: state.color,
         ),
         RegisterForm(
+          onBack: () => prevPage(),
           user: user,
           backgroundKey: _backgroundKey,
           bloc: bloc,
@@ -117,6 +119,15 @@ class _LoginState extends State<Login> {
   nextPage() {
     return Future.delayed(Duration(milliseconds: 250), () async {
       await controller.nextPage(
+        duration: Duration(milliseconds: 1000),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  prevPage() {
+    return Future.delayed(Duration(milliseconds: 250), () async {
+      await controller.previousPage(
         duration: Duration(milliseconds: 1000),
         curve: Curves.easeOutCubic,
       );
