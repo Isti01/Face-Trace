@@ -11,9 +11,8 @@ A dating app that helps you find the best-looking partner, it adapts to your pre
 - Chat ![Chat](./screenshots/chat.jpg)
 
 ## How to build the app
-
 - Install [Flutter](https://docs.flutter.dev/get-started/install)
-- Install Android Studio (not necessary, but highly recommended)
+- Install [Android Studio](https://developer.android.com/studio) (not necessary, but highly recommended)
 - Clone the repo
 ```shell
 git clone https://github.com/Isti01/Face-Trace.git
